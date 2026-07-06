@@ -1,13 +1,15 @@
 <script lang="ts">
     import "../../../app.css";
     import { page } from "$app/state";
-    import { onMount, tick } from "svelte";
+    import { tick } from "svelte";
     import { WikipediaAPI } from "$lib/api/wikipedia";
-    import { include } from "rolldown/filter";
+
+    type ContentSection = [string, string, string?];
+    type Breadcrumb = [string, string, string];
 
     let title = $state("");
-    let content = $state([]);
-    let breadcrumbs = $state([]);
+    let content = $state<ContentSection[]>([]);
+    let breadcrumbs = $state<Breadcrumb[]>([]);
     let firstImg = $state("");
 
     let words = $state(0);
@@ -15,6 +17,95 @@
     let readingTime = $state(0);
 
     let scrollElement = $state("");
+    let collapsedSections = $state<string[]>([]);
+    let activeBreadcrumbId = $state("");
+    let pageContainer: HTMLDivElement;
+
+    function toggleSection(id: string) {
+        if (collapsedSections.includes(id)) {
+            collapsedSections = collapsedSections.filter((sectionId) => sectionId !== id);
+        } else {
+            collapsedSections = [...collapsedSections, id];
+        }
+    }
+
+    function isSectionCollapsed(id: string) {
+        return collapsedSections.includes(id);
+    }
+
+    function getBreadcrumbClass(tag: string, id: string) {
+        return `breadcrumb breadcrumb-${tag.toLowerCase()}${activeBreadcrumbId === id ? " active" : ""}`;
+    }
+
+    function syncActiveBreadcrumbIntoView() {
+        document.querySelector("#crumbs .breadcrumb.active")?.scrollIntoView({
+            block: "nearest",
+        });
+    }
+
+    function updateActiveBreadcrumb() {
+        let activeId = breadcrumbs[0]?.[1] ?? "";
+        const scrollOffset = 140;
+
+        for (const crumb of breadcrumbs) {
+            const element = document.getElementById(crumb[1]);
+            if (!element) continue;
+
+            if (element.getBoundingClientRect().top <= scrollOffset) {
+                activeId = crumb[1];
+            } else {
+                break;
+            }
+        }
+
+        if (activeBreadcrumbId !== activeId) {
+            activeBreadcrumbId = activeId;
+            requestAnimationFrame(syncActiveBreadcrumbIntoView);
+        }
+    }
+
+    function getParentH2IdFromIndex(index: number) {
+        for (let i = index; i >= 0; i--) {
+            const section = content[i];
+
+            if (section[0] === "H2") {
+                return section[2] ?? "";
+            }
+        }
+
+        return "";
+    }
+
+    function getParentH2Id(id: string) {
+        const sectionIndex = content.findIndex((section) => section[2] === id);
+        if (sectionIndex === -1) return "";
+
+        return getParentH2IdFromIndex(sectionIndex);
+    }
+
+    function isHiddenByCollapsedH2(index: number) {
+        if (content[index][0] === "H2") return false;
+
+        const parentH2Id = getParentH2IdFromIndex(index);
+        if (!parentH2Id) return false;
+
+        return collapsedSections.includes(parentH2Id);
+    }
+
+    async function openBreadcrumb(id: string, event: MouseEvent) {
+        event.preventDefault();
+
+        const parentH2Id = getParentH2Id(id);
+        if (parentH2Id && collapsedSections.includes(parentH2Id)) {
+            collapsedSections = collapsedSections.filter((sectionId) => sectionId !== parentH2Id);
+            await tick();
+        }
+
+        document.getElementById(id)?.scrollIntoView();
+        activeBreadcrumbId = id;
+        history.pushState(null, "", `#${id}`);
+        requestAnimationFrame(syncActiveBreadcrumbIntoView);
+    }
 
     $effect(() => {
         page.params.title;
@@ -26,6 +117,7 @@
             let element = document.getElementById(scrollElement);
             if (element) {
                 element.scrollIntoView();
+                activeBreadcrumbId = scrollElement;
             }
         }
     });
@@ -34,15 +126,17 @@
         words = 0;
         references = 0;
         readingTime = 0;
+        firstImg = "";
+        collapsedSections = [];
 
         const api = new WikipediaAPI();
-        let pageContent = await api.getPageContent(page.params.title);
+        let pageContent = await api.getPageContent(page.params.title ?? "");
         title = pageContent.title;
         document.title = `${title} • Lemma`;
 
         let fetchedContent = pageContent.text["*"]
-            .replace(/<style [^>]+>.+<\/style>/g, "")
-            .replace(/<span class="mw-editsection">.+<\/span>/g, "");
+            .replace(new RegExp("<style [^>]+>.+</style>", "g"), "")
+            .replace(new RegExp('<span class="mw-editsection">.+</span>', "g"), "");
 
         let elem = document.createElement("div");
         elem.innerHTML = fetchedContent;
@@ -90,7 +184,7 @@
                     references += element.innerHTML.split("<a").length;
                 }
             } else if (element.tagName === "A") {
-                content.push([element.tagName, element.textContent, element.href]);
+                content.push([element.tagName, element.textContent ?? "", (element as HTMLAnchorElement).href]);
                 references += 1;
             } else if (element.tagName.includes("H")) {
                 let hash = page.url.hash.replace("#", "");
@@ -98,9 +192,9 @@
                     scrollElement = hash;
                 }
 
-                content.push([element.tagName, element.textContent, element.id]);
-                breadcrumbs.push([element.textContent, element.id]);
-                words += element.textContent.split(" ").length;
+                content.push([element.tagName, element.textContent ?? "", element.id]);
+                breadcrumbs.push([element.textContent ?? "", element.id, element.tagName]);
+                words += (element.textContent ?? "").split(" ").length;
             } else if (element.tagName === "UL") {
                 if (element.parentElement?.parentElement?.tagName !== "DIV") {
                     if (
@@ -113,55 +207,77 @@
                 }
             }
         }
+
+        activeBreadcrumbId = breadcrumbs[0]?.[1] ?? "";
+        await tick();
+        updateActiveBreadcrumb();
     }
 </script>
 
-<div id="pageContainer">
+<svelte:window onscroll={updateActiveBreadcrumb} />
+
+<div id="pageContainer" bind:this={pageContainer} onscroll={updateActiveBreadcrumb}>
     <title>{page.params.title} • Lemma</title>
     <!-- <div id="navbar">Lemma</div> -->
     <div id="contentContainer">
         <h1 id="title">{title}</h1>
-        <mini>{words} words · {references} links · {parseInt(words / 200)} min read</mini>
+        <mini>{words} words · {references} links · {Math.floor(words / 200)} min read</mini>
         <hr />
 
         {#each content as section, i}
-            {#if section[0] === "IMG"}
-                {#if i > 0 && content[i - 1][0] !== "IMG"}
-                    <br />
-                {/if}
+            {#if !isHiddenByCollapsedH2(i)}
+                {#if section[0] === "IMG"}
+                    {#if i > 0 && content[i - 1][0] !== "IMG"}
+                        <br />
+                    {/if}
 
-                <img alt src={section[1]} class="img" />
+                    <img alt="" src={section[1]} class="img" />
 
-                {#if !(i > 0 && i < content.length && content[i - 1][0] !== "IMG" && content[i + 1][0] !== "IMG")}
+                    {#if !(i > 0 && i < content.length - 1 && content[i - 1][0] !== "IMG" && content[i + 1][0] !== "IMG")}
+                        <br />
+                    {/if}
                     <br />
+                {:else if section[0] === "P"}
+                    <p>
+                        {@html section[1]}
+                    </p>
+                    {#if i < content.length - 1 && content[i + 1][0] === "P"}<br />{/if}
+                {:else if section[0] === "H1"}
+                    <h1 id={section[2]}>{section[1]}</h1>
+                {:else if section[0] === "H2"}
+                    <h2 id={section[2]}>
+                        <br />
+                        <button
+                            class="chev"
+                            type="button"
+                            aria-label={isSectionCollapsed(section[2] ?? "") ? "Expand section" : "Collapse section"}
+                            aria-expanded={!isSectionCollapsed(section[2] ?? "")}
+                            onclick={() => toggleSection(section[2] ?? "")}
+                        >
+                            <img
+                                alt=""
+                                src={isSectionCollapsed(section[2] ?? "")
+                                    ? "/icon/chev_close.svg"
+                                    : "/icon/chev_open.svg"}
+                                class="icon"
+                            />
+                        </button>{section[1]}
+                    </h2>
+                {:else if section[0] === "H3"}
+                    <h3 id={section[2]}>{section[1]}</h3>
+                {:else if section[0] === "H4"}
+                    <h4 id={section[2]}>{section[1]}</h4>
+                {:else if section[0] === "H5"}
+                    <h5 id={section[2]}>{section[1]}</h5>
+                {:else if section[0] === "H6"}
+                    <h6 id={section[2]}>{section[1]}</h6>
+                {:else if section[0] === "A"}
+                    <a href={section[2]}>{section[1]}</a>
+                {:else if section[0] === "UL"}
+                    <ul>
+                        {@html section[1]}
+                    </ul>
                 {/if}
-                <br />
-            {:else if section[0] === "P"}
-                <p>
-                    {@html section[1]}
-                </p>
-                {#if i < content.length - 1 && content[i + 1][0] === "P"}<br />{/if}
-            {:else if section[0] === "H1"}
-                <h1 id={section[2]}>{section[1]}</h1>
-            {:else if section[0] === "H2"}
-                <h2 id={section[2]}>
-                    <br />
-                    <button class="chev"><img alt src="/icon/chev_open.svg" class="icon" /></button>{section[1]}
-                </h2>
-            {:else if section[0] === "H3"}
-                <h3 id={section[2]}>{section[1]}</h3>
-            {:else if section[0] === "H4"}
-                <h4 id={section[2]}>{section[1]}</h4>
-            {:else if section[0] === "H5"}
-                <h5 id={section[2]}>{section[1]}</h5>
-            {:else if section[0] === "H6"}
-                <h6 id={section[2]}>{section[1]}</h6>
-            {:else if section[0] === "A"}
-                <a href={section[2]}>{section[1]}</a>
-            {:else if section[0] === "UL"}
-                <ul>
-                    {@html section[1]}
-                </ul>
             {/if}
         {/each}
 
@@ -172,11 +288,17 @@
 
     <div id="breadcrumbs">
         <b>{title}</b>
-        <br />
-        {#each breadcrumbs as crumb}
-            <a href="#{crumb[1].replaceAll(' ', '_')}">{crumb[0]}</a>
-            <br />
-        {/each}
+        <div id="crumbFrame">
+            <div id="crumbs">
+                {#each breadcrumbs as crumb}
+                    <a
+                        class={getBreadcrumbClass(crumb[2], crumb[1])}
+                        href="#{crumb[1].replaceAll(' ', '_')}"
+                        onclick={(event) => openBreadcrumb(crumb[1], event)}>{crumb[0]}</a
+                    >
+                {/each}
+            </div>
+        </div>
     </div>
 </div>
 
@@ -219,25 +341,120 @@
 
         left: 32px;
         top: 100px;
-        pointer-events: none;
 
         height: 80%;
 
         width: fit-content;
         max-width: calc(30% - 5ch - 10%);
         min-width: calc(30% - 5ch - 10%);
+        overflow: hidden;
 
         b {
+            display: block;
             font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        #crumbFrame {
+            position: relative;
+            height: calc(100% - 2.5rem);
+            overflow: hidden;
+        }
+
+        #crumbFrame::before,
+        #crumbFrame::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 14px;
+            z-index: 2;
+            height: 2.5rem;
+            pointer-events: none;
+        }
+
+        #crumbFrame::before {
+            top: 0;
+            background: linear-gradient(var(--page-bg), transparent);
+        }
+
+        #crumbFrame::after {
+            bottom: 0;
+            background: linear-gradient(transparent, var(--page-bg));
+        }
+
+        #crumbs {
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 1.25rem 14px 1.25rem 0;
+            scrollbar-gutter: stable;
         }
 
         a {
+            width: 80%;
             color: var(--color);
             pointer-events: all;
         }
 
         a:focus {
             outline: none;
+        }
+
+        .breadcrumb {
+            display: block;
+            line-height: 1.25rem;
+            margin-bottom: 0.25rem;
+            opacity: 0.8;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .breadcrumb:hover {
+            opacity: 1;
+        }
+
+        .breadcrumb.active {
+            color: oklch(0.45 0.18 var(--hue));
+            font-weight: 700;
+            opacity: 1;
+            text-decoration-color: oklch(0.45 0.18 var(--hue) / 45%);
+        }
+
+        .breadcrumb-h1 {
+            font-size: 1rem;
+            font-weight: 650;
+            margin-left: 0;
+        }
+
+        .breadcrumb-h2 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-left: 0.35rem;
+        }
+
+        .breadcrumb-h3 {
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-left: 0.9rem;
+        }
+
+        .breadcrumb-h4 {
+            font-size: 0.78rem;
+            font-weight: 450;
+            margin-left: 1.35rem;
+        }
+
+        .breadcrumb-h5 {
+            font-size: 0.72rem;
+            font-weight: 425;
+            margin-left: 1.75rem;
+        }
+
+        .breadcrumb-h6 {
+            font-size: 0.68rem;
+            font-weight: 400;
+            margin-left: 2.1rem;
         }
     }
 

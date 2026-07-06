@@ -51,6 +51,10 @@
             }
         }
 
+        a:focus {
+            outline: none;
+        }
+
         #header {
             position: absolute;
             user-select: none;
@@ -96,7 +100,7 @@
         #header:hover {
             h1 .char {
                 animation: font-weight-wave 0.8s ease-in-out;
-                animation-delay: calc(var(--i) * 0.04s);
+                animation-delay: calc(0.5s + var(--i) * 0.04s);
             }
         }
     }

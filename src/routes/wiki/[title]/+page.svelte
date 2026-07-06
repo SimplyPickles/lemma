@@ -31,6 +31,7 @@
     let scrollElement = $state("");
     let collapsedSections = $state<string[]>([]);
     let collapsedBreadcrumbs = $state<string[]>([]);
+    let autoExpandedBreadcrumbs = $state<string[]>([]);
     let activeBreadcrumbId = $state("");
     let pageContainer: HTMLDivElement;
 
@@ -54,6 +55,8 @@
         event.preventDefault();
         event.stopPropagation();
         (event.currentTarget as HTMLButtonElement).blur();
+
+        autoExpandedBreadcrumbs = autoExpandedBreadcrumbs.filter((sectionId) => sectionId !== id);
 
         if (collapsedBreadcrumbs.includes(id)) {
             collapsedBreadcrumbs = collapsedBreadcrumbs.filter((sectionId) => sectionId !== id);
@@ -113,9 +116,9 @@
         });
     }
 
-    function expandBreadcrumbAncestors(id: string) {
+    function getBreadcrumbAncestorIds(id: string) {
         const index = breadcrumbs.findIndex((crumb) => crumb[1] === id);
-        if (index === -1) return;
+        if (index === -1) return new Set<string>();
 
         const ancestors = new Set<string>();
         let childLevel = getHeadingLevel(breadcrumbs[index][2]);
@@ -129,10 +132,30 @@
             }
         }
 
-        const nextCollapsedBreadcrumbs = collapsedBreadcrumbs.filter((sectionId) => !ancestors.has(sectionId));
-        if (nextCollapsedBreadcrumbs.length !== collapsedBreadcrumbs.length) {
-            collapsedBreadcrumbs = nextCollapsedBreadcrumbs;
+        return ancestors;
+    }
+
+    function syncAutoExpandedBreadcrumbs(id: string) {
+        const activeAncestors = getBreadcrumbAncestorIds(id);
+        const collapsedSet = new Set(collapsedBreadcrumbs);
+        const autoExpandedSet = new Set(autoExpandedBreadcrumbs);
+
+        for (const sectionId of autoExpandedSet) {
+            if (!activeAncestors.has(sectionId)) {
+                collapsedSet.add(sectionId);
+                autoExpandedSet.delete(sectionId);
+            }
         }
+
+        for (const sectionId of activeAncestors) {
+            if (collapsedSet.has(sectionId)) {
+                collapsedSet.delete(sectionId);
+                autoExpandedSet.add(sectionId);
+            }
+        }
+
+        collapsedBreadcrumbs = [...collapsedSet];
+        autoExpandedBreadcrumbs = [...autoExpandedSet];
     }
 
     function updateActiveBreadcrumb() {
@@ -150,7 +173,7 @@
             }
         }
 
-        expandBreadcrumbAncestors(activeId);
+        syncAutoExpandedBreadcrumbs(activeId);
 
         if (activeBreadcrumbId !== activeId) {
             activeBreadcrumbId = activeId;
@@ -223,6 +246,7 @@
         firstImg = "";
         collapsedSections = [];
         collapsedBreadcrumbs = [];
+        autoExpandedBreadcrumbs = [];
 
         const api = new WikipediaAPI();
         let pageContent = await api.getPageContent(page.params.title ?? "");
@@ -313,7 +337,8 @@
 
         activeBreadcrumbId = breadcrumbs[0]?.[1] ?? "";
         collapsedBreadcrumbs = getCollapsibleBreadcrumbIds();
-        expandBreadcrumbAncestors(activeBreadcrumbId);
+        autoExpandedBreadcrumbs = [];
+        syncAutoExpandedBreadcrumbs(activeBreadcrumbId);
         await tick();
         updateActiveBreadcrumb();
     }

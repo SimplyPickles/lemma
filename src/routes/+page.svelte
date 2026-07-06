@@ -3,6 +3,7 @@
     import "../app.css";
     import Searchbar from "../components/searchbar.svelte";
     import { WikipediaAPI } from "$lib/api/wikipedia";
+    import Navbar from "../components/navbar.svelte";
 
     let words =
         `Lemma is a private, fast, and beautifully designed Wikipedia wrapper that makes exploring knowledge feel effortless. Lemma provides a clean, focused reading experience with instant access to the information you want, without noise or distractions.`.split(
@@ -18,6 +19,7 @@
 
 <div id="hero">
     <title>Lemma</title>
+    <Navbar></Navbar>
     <h1>Lemma</h1>
     <p>
         {#each words as w, i}

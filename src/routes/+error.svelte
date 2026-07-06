@@ -1,5 +1,6 @@
 <script lang="ts">
     import "../app.css";
+    import Navbar from "../components/navbar.svelte";
 
     const homeMessages = ["Go back home", "Return to ground zero", "Take me back", "Home sweet home"];
 
@@ -13,6 +14,7 @@
 
 <div id="container">
     <title>404</title>
+    <Navbar></Navbar>
     <h1>404</h1>
 
     <p>

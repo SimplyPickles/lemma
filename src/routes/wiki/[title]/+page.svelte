@@ -30,6 +30,7 @@
 
     let scrollElement = $state("");
     let collapsedSections = $state<string[]>([]);
+    let collapsedBreadcrumbs = $state<string[]>([]);
     let activeBreadcrumbId = $state("");
     let pageContainer: HTMLDivElement;
 
@@ -45,6 +46,63 @@
         return collapsedSections.includes(id);
     }
 
+    function getHeadingLevel(tag: string) {
+        return Number(tag.replace("H", ""));
+    }
+
+    function toggleBreadcrumb(id: string, event: MouseEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+        (event.currentTarget as HTMLButtonElement).blur();
+
+        if (collapsedBreadcrumbs.includes(id)) {
+            collapsedBreadcrumbs = collapsedBreadcrumbs.filter((sectionId) => sectionId !== id);
+        } else {
+            collapsedBreadcrumbs = [...collapsedBreadcrumbs, id];
+        }
+    }
+
+    function isBreadcrumbCollapsed(id: string) {
+        return collapsedBreadcrumbs.includes(id);
+    }
+
+    function breadcrumbHasChildren(index: number, breadcrumbList = breadcrumbs) {
+        const level = getHeadingLevel(breadcrumbList[index][2]);
+
+        for (let i = index + 1; i < breadcrumbList.length; i++) {
+            const nextLevel = getHeadingLevel(breadcrumbList[i][2]);
+
+            if (nextLevel <= level) return false;
+            if (nextLevel > level) return true;
+        }
+
+        return false;
+    }
+
+    function getCollapsibleBreadcrumbIds(breadcrumbList = breadcrumbs) {
+        return breadcrumbList
+            .filter((_, index) => breadcrumbHasChildren(index, breadcrumbList))
+            .map((crumb) => crumb[1]);
+    }
+
+    function isBreadcrumbHidden(index: number) {
+        let childLevel = getHeadingLevel(breadcrumbs[index][2]);
+
+        for (let i = index - 1; i >= 0; i--) {
+            const ancestorLevel = getHeadingLevel(breadcrumbs[i][2]);
+
+            if (ancestorLevel < childLevel) {
+                if (collapsedBreadcrumbs.includes(breadcrumbs[i][1])) {
+                    return true;
+                }
+
+                childLevel = ancestorLevel;
+            }
+        }
+
+        return false;
+    }
+
     function getBreadcrumbClass(tag: string, id: string) {
         return `breadcrumb breadcrumb-${tag.toLowerCase()}${activeBreadcrumbId === id ? " active" : ""}`;
     }
@@ -53,6 +111,28 @@
         document.querySelector("#crumbs .breadcrumb.active")?.scrollIntoView({
             block: "nearest",
         });
+    }
+
+    function expandBreadcrumbAncestors(id: string) {
+        const index = breadcrumbs.findIndex((crumb) => crumb[1] === id);
+        if (index === -1) return;
+
+        const ancestors = new Set<string>();
+        let childLevel = getHeadingLevel(breadcrumbs[index][2]);
+
+        for (let i = index - 1; i >= 0; i--) {
+            const ancestorLevel = getHeadingLevel(breadcrumbs[i][2]);
+
+            if (ancestorLevel < childLevel) {
+                ancestors.add(breadcrumbs[i][1]);
+                childLevel = ancestorLevel;
+            }
+        }
+
+        const nextCollapsedBreadcrumbs = collapsedBreadcrumbs.filter((sectionId) => !ancestors.has(sectionId));
+        if (nextCollapsedBreadcrumbs.length !== collapsedBreadcrumbs.length) {
+            collapsedBreadcrumbs = nextCollapsedBreadcrumbs;
+        }
     }
 
     function updateActiveBreadcrumb() {
@@ -69,6 +149,8 @@
                 break;
             }
         }
+
+        expandBreadcrumbAncestors(activeId);
 
         if (activeBreadcrumbId !== activeId) {
             activeBreadcrumbId = activeId;
@@ -140,6 +222,7 @@
         readingTime = 0;
         firstImg = "";
         collapsedSections = [];
+        collapsedBreadcrumbs = [];
 
         const api = new WikipediaAPI();
         let pageContent = await api.getPageContent(page.params.title ?? "");
@@ -229,6 +312,8 @@
         }
 
         activeBreadcrumbId = breadcrumbs[0]?.[1] ?? "";
+        collapsedBreadcrumbs = getCollapsibleBreadcrumbIds();
+        expandBreadcrumbAncestors(activeBreadcrumbId);
         await tick();
         updateActiveBreadcrumb();
     }
@@ -314,12 +399,38 @@
         <b>{title}</b>
         <div id="crumbFrame">
             <div id="crumbs">
-                {#each breadcrumbs as crumb}
-                    <a
-                        class={getBreadcrumbClass(crumb[2], crumb[1])}
-                        href="#{crumb[1].replaceAll(' ', '_')}"
-                        onclick={(event) => openBreadcrumb(crumb[1], event)}>{crumb[0]}</a
-                    >
+                {#each breadcrumbs as crumb, i}
+                    {#if !isBreadcrumbHidden(i)}
+                        <div class="breadcrumb-row">
+                            {#if breadcrumbHasChildren(i)}
+                                <button
+                                    class="breadcrumb-fold"
+                                    type="button"
+                                    aria-label={isBreadcrumbCollapsed(crumb[1])
+                                        ? "Expand breadcrumb section"
+                                        : "Collapse breadcrumb section"}
+                                    aria-expanded={!isBreadcrumbCollapsed(crumb[1])}
+                                    onclick={(event) => toggleBreadcrumb(crumb[1], event)}
+                                >
+                                    <img
+                                        alt=""
+                                        src={isBreadcrumbCollapsed(crumb[1])
+                                            ? "/icon/chev_close.svg"
+                                            : "/icon/chev_open.svg"}
+                                        style={`--chevron-icon: url(${isBreadcrumbCollapsed(crumb[1]) ? "/icon/chev_close.svg" : "/icon/chev_open.svg"})`}
+                                        class="icon"
+                                    />
+                                </button>
+                            {:else}
+                                <span class="breadcrumb-fold-spacer"></span>
+                            {/if}
+                            <a
+                                class={getBreadcrumbClass(crumb[2], crumb[1])}
+                                href="#{crumb[1].replaceAll(' ', '_')}"
+                                onclick={(event) => openBreadcrumb(crumb[1], event)}>{crumb[0]}</a
+                            >
+                        </div>
+                    {/if}
                 {/each}
                 <div class="crumb-spacer" aria-hidden="true"></div>
             </div>
@@ -397,6 +508,49 @@
             outline: none;
         }
 
+        .breadcrumb-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.2rem;
+            min-width: 0;
+        }
+
+        .breadcrumb-fold,
+        .breadcrumb-fold-spacer {
+            flex: 0 0 1rem;
+            width: 1rem;
+            height: 1.25rem;
+            margin: 0;
+        }
+
+        .breadcrumb-fold {
+            display: grid;
+            place-items: center;
+            border: none;
+            padding: 0;
+            background: none;
+            color: var(--color);
+            cursor: pointer;
+            opacity: 0.75;
+        }
+
+        .breadcrumb-fold:hover {
+            opacity: 1;
+        }
+
+        .breadcrumb-fold:focus,
+        .breadcrumb-fold:focus-visible {
+            outline: none;
+        }
+
+        .breadcrumb-fold img {
+            width: 0.95rem;
+            height: 0.95rem;
+            background: currentColor;
+            mask: var(--chevron-icon) center / contain no-repeat;
+            -webkit-mask: var(--chevron-icon) center / contain no-repeat;
+        }
+
         .breadcrumb {
             display: block;
             line-height: 1.25rem;
@@ -405,6 +559,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            min-width: 0;
         }
 
         .breadcrumb:hover {

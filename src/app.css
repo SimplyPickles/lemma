@@ -40,6 +40,11 @@
     .icon:hover {
         opacity: 0.75;
     }
+
+    .icon:focus {
+        opacity: 0.75;
+        outline: none;
+    }
 }
 
 hr {

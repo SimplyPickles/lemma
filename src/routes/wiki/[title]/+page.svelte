@@ -3,6 +3,7 @@
     import { page } from "$app/state";
     import { tick } from "svelte";
     import { WikipediaAPI } from "$lib/api/wikipedia";
+    import Navbar from "../../../components/navbar.svelte";
 
     type ContentSection = [string, string, string?];
     type Breadcrumb = [string, string, string];
@@ -140,6 +141,7 @@
 
         let elem = document.createElement("div");
         elem.innerHTML = fetchedContent;
+        console.log(elem.textContent);
         for (const child of elem.children[0].children) {
             if (
                 child.classList.contains("plainlist") ||
@@ -196,7 +198,11 @@
                 breadcrumbs.push([element.textContent ?? "", element.id, element.tagName]);
                 words += (element.textContent ?? "").split(" ").length;
             } else if (element.tagName === "UL") {
-                if (element.parentElement?.parentElement?.tagName !== "DIV") {
+                if (
+                    element.parentElement?.parentElement?.tagName !== "UL" &&
+                    element.parentElement?.parentElement?.tagName !== "LI" &&
+                    element.parentElement?.parentElement?.tagName !== "DIV"
+                ) {
                     if (
                         !Array.from(element.parentElement?.classList ?? []).some((cls) => cls.includes("bar")) ||
                         element.innerHTML.includes("collapsable-list")
@@ -217,8 +223,8 @@
 <svelte:window onscroll={updateActiveBreadcrumb} />
 
 <div id="pageContainer" bind:this={pageContainer} onscroll={updateActiveBreadcrumb}>
+    <Navbar></Navbar>
     <title>{page.params.title} • Lemma</title>
-    <!-- <div id="navbar">Lemma</div> -->
     <div id="contentContainer">
         <h1 id="title">{title}</h1>
         <mini>{words} words · {references} links · {Math.floor(words / 200)} min read</mini>
@@ -297,6 +303,7 @@
                         onclick={(event) => openBreadcrumb(crumb[1], event)}>{crumb[0]}</a
                     >
                 {/each}
+                <div class="crumb-spacer" aria-hidden="true"></div>
             </div>
         </div>
     </div>
@@ -322,18 +329,8 @@
         top: 2.5%;
         height: 100%;
         padding: 5%;
-        left: calc(30% - 5ch - 10%);
+        left: calc(25% - 5ch);
         line-height: 2rem;
-    }
-
-    #navbar {
-        position: fixed;
-        width: 100%;
-        height: 68px;
-        background: var(--page-bg);
-        z-index: 10;
-        left: 0;
-        top: 0;
     }
 
     #breadcrumbs {
@@ -361,32 +358,14 @@
             overflow: hidden;
         }
 
-        #crumbFrame::before,
-        #crumbFrame::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            right: 14px;
-            z-index: 2;
-            height: 2.5rem;
-            pointer-events: none;
-        }
-
-        #crumbFrame::before {
-            top: 0;
-            background: linear-gradient(var(--page-bg), transparent);
-        }
-
-        #crumbFrame::after {
-            bottom: 0;
-            background: linear-gradient(transparent, var(--page-bg));
-        }
-
         #crumbs {
+            scroll-behavior: smooth;
+            overscroll-behavior: contain;
             height: 100%;
             overflow-x: hidden;
             overflow-y: auto;
-            padding: 1.25rem 14px 1.25rem 0;
+            padding: 0 14px 4rem 0;
+            scroll-padding: 2.5rem 0 4rem;
             scrollbar-gutter: stable;
         }
 
@@ -412,6 +391,10 @@
 
         .breadcrumb:hover {
             opacity: 1;
+        }
+
+        .crumb-spacer {
+            height: 3rem;
         }
 
         .breadcrumb.active {
@@ -522,10 +505,6 @@
         opacity: 1;
     }
 
-    p {
-        text-align: justify;
-    }
-
     h1 {
         min-height: 2rem;
         margin-bottom: -0.25rem;
@@ -550,6 +529,97 @@
 
         100% {
             opacity: 1;
+        }
+    }
+
+    @media (max-width: 1050px) {
+        #contentContainer {
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(82vw, 50ch);
+        }
+
+        #breadcrumbs {
+            left: 0;
+            top: 96px;
+            width: 280px;
+            min-width: 280px;
+            max-width: 280px;
+            height: min(72%, 620px);
+            padding: 0.9rem 0.85rem;
+            background: color-mix(in oklch, var(--page-bg) 92%, white 8%);
+            border: solid 1px var(--secondary);
+            border-left: none;
+            border-radius: 0 9px 9px 0;
+            box-shadow: 0 8px 24px var(--shadow-color);
+            transform: translateX(calc(-100% + 34px));
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+            z-index: 20;
+        }
+
+        #breadcrumbs:hover,
+        #breadcrumbs:focus-within {
+            transform: translateX(0);
+            box-shadow: 0 12px 32px var(--shadow-color);
+        }
+
+        #breadcrumbs::after {
+            content: "Sections";
+            position: absolute;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            right: 7px;
+            top: 1rem;
+            bottom: 1rem;
+            display: grid;
+            place-items: center;
+            color: var(--color);
+            font-family: satoshi;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            opacity: 0.55;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
+
+        #breadcrumbs:hover::after,
+        #breadcrumbs:focus-within::after {
+            opacity: 0;
+        }
+
+        #breadcrumbs b,
+        #breadcrumbs #crumbFrame {
+            width: calc(100% - 34px);
+            opacity: 0;
+            transition:
+                opacity 0.15s ease,
+                width 0.2s ease;
+        }
+
+        #breadcrumbs:hover b,
+        #breadcrumbs:hover #crumbFrame,
+        #breadcrumbs:focus-within b,
+        #breadcrumbs:focus-within #crumbFrame {
+            width: 100%;
+            opacity: 1;
+        }
+    }
+
+    @media (max-width: 640px) {
+        #contentContainer {
+            width: min(88vw, 50ch);
+            padding: 7% 0 5%;
+        }
+
+        #breadcrumbs {
+            top: 72px;
+            width: min(82vw, 280px);
+            min-width: min(82vw, 280px);
+            max-width: min(82vw, 280px);
+            height: 60%;
         }
     }
 </style>

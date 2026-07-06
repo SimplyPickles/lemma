@@ -135,6 +135,14 @@
         return ancestors;
     }
 
+    function expandBreadcrumbForJump(id: string) {
+        const idsToExpand = getBreadcrumbAncestorIds(id);
+        idsToExpand.add(id);
+
+        collapsedBreadcrumbs = collapsedBreadcrumbs.filter((sectionId) => !idsToExpand.has(sectionId));
+        autoExpandedBreadcrumbs = autoExpandedBreadcrumbs.filter((sectionId) => sectionId !== id);
+    }
+
     function syncAutoExpandedBreadcrumbs(id: string) {
         const activeAncestors = getBreadcrumbAncestorIds(id);
         const collapsedSet = new Set(collapsedBreadcrumbs);
@@ -211,6 +219,9 @@
 
     async function openBreadcrumb(id: string, event: MouseEvent) {
         event.preventDefault();
+
+        expandBreadcrumbForJump(id);
+        await tick();
 
         const parentH2Id = getParentH2Id(id);
         if (parentH2Id && collapsedSections.includes(parentH2Id)) {

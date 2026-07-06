@@ -11,7 +11,7 @@
     </a>
 
     <span id="buttons">
-        <a href="/featured">Featured</a>
+        <a href="/tools">Tools</a>
         <a href="/about">About</a>
         <a href="/options">Options</a>
     </span>
@@ -22,7 +22,7 @@
         position: fixed;
         width: 100%;
         height: 52px;
-        background: color-mix(in oklch, var(--page-bg) 92%, transparent);
+        background: color-mix(in oklch, var(--page-bg) 80%, transparent);
         border-bottom: 1px solid color-mix(in oklch, var(--secondary) 70%, transparent);
         z-index: 1;
         backdrop-filter: blur(2px);

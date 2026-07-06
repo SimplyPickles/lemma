@@ -17,12 +17,14 @@ The app fetches Wikipedia articles, extracts the readable content, and presents 
 ```text
 src/
   components/
+    navbar.svelte             # Fixed navigation/header UI
     searchbar.svelte          # Search input UI
   lib/
     api/
       schemas.ts              # Wikipedia endpoint URL templates
       wikipedia.ts            # Wikipedia API wrapper
   routes/
+    +layout.svelte            # Global app shell, favicon, and CSS import
     +page.svelte              # Landing page
     +error.svelte             # Error/404 page
     search/+page.svelte       # Search page layout
@@ -51,8 +53,7 @@ Open the app in your browser at the local URL printed by Vite, usually `http://l
 To start the dev server and open the browser automatically:
 
 ```sh
-bun run dev
- -- --open
+bun run dev --open
 ```
 
 ## Available scripts
@@ -76,7 +77,7 @@ Articles are served through the dynamic route:
 For example:
 
 ```text
-/wiki/Potato
+/wiki/MacOS
 /wiki/Alan_Turing
 /wiki/Svelte
 ```
@@ -91,7 +92,7 @@ Lemma talks directly to public Wikipedia endpoints from the browser:
 - Page content: `action=parse&prop=text`
 - Media list endpoint available in the schema definitions
 
-The API wrapper lives in `src/lib/api/wikipedia.ts`, with endpoint templates in `src/lib/api/schemas.ts`.
+The API wrapper lives in `src/lib/api/wikipedia.ts`, with endpoint templates in `src/lib/api/schemas.ts`. The wrapper includes lightweight TypeScript response shapes for the Wikipedia search and parsed-page responses, and `encodeSchemaURL` handles URL-safe query interpolation.
 
 Because requests are client-side, users connect directly to Wikipedia. Lemma does not require an API key, backend proxy, or server-side cache.
 
@@ -107,7 +108,7 @@ Lemma’s interface is intentionally quiet:
 - focused article width for readability,
 - persistent section navigation for longer articles.
 
-Global visual styles live in `src/app.css`, while route-specific layout and animation styles live alongside each Svelte route.
+Global visual styles live in `src/app.css` and are imported once from `src/routes/+layout.svelte`; route-specific layout and animation styles live alongside each Svelte route.
 
 ## Deployment
 
@@ -124,15 +125,3 @@ Preview the production build with:
 ```sh
 bun run preview
 ```
-
-## Future enhancements
-
-Planned improvements include:
-
-- connecting the search bar to live Wikipedia results,
-- expanding the `/search` page into a full results experience,
-- improving redirect, missing-page, and disambiguation handling,
-- refining mobile and small-screen layouts,
-- adding stronger HTML sanitization around article rendering,
-- adding tests
-  for the API wrapper and article parser.

@@ -4,7 +4,6 @@ A prioritized list of useful and necessary improvements for Lemma.
 
 ## High priority
 
-- [ ] Fix the current Svelte check error in `src/routes/wiki/[title]/+page.svelte`.
 - [ ] Wire `Searchbar` input to actual search behavior.
   - [ ] Capture user input.
   - [ ] Submit on `Enter`.
@@ -17,7 +16,6 @@ A prioritized list of useful and necessary improvements for Lemma.
   - [ ] Link each result to `/wiki/[title]`.
 - [ ] Add loading, error, and empty states for article and search requests.
 - [ ] Handle missing pages and failed Wikipedia API responses gracefully.
-- [ ] Remove leftover debugging code from the landing page, including the `console.log` article fetch.
 
 ## Article rendering
 
@@ -26,11 +24,7 @@ A prioritized list of useful and necessary improvements for Lemma.
 - [ ] Detect and present disambiguation pages more clearly.
 - [ ] Preserve useful article elements that are currently skipped, such as ordered lists, tables, blockquotes, captions, and math where appropriate.
 - [ ] Improve reference/link counting so it counts real article links rather than raw `<a` occurrences.
-- [ ] Reset `firstImg` when navigating between wiki pages.
 - [ ] Improve heading anchor behavior and scrolling for hash links.
-- [ ] Make section chevrons functional.
-  - [ ] Collapse and expand sections.
-  - [ ] Swap between open and closed chevron icons.
 - [ ] Convert internal Wikipedia links to Lemma routes where possible.
   - Example: `/wiki/Alan_Turing` instead of navigating to wikipedia.org.
 - [ ] Add article-level metadata, such as source link and last edited date if available.
@@ -63,19 +57,17 @@ A prioritized list of useful and necessary improvements for Lemma.
 - [ ] Avoid reparsing article HTML when revisiting the same page.
 - [ ] Lazy-load article images.
 - [ ] Consider limiting very large articles or progressively rendering sections.
-- [ ] Remove unused imports and CSS selectors.
 - [ ] Audit bundle size after major UI/API changes.
 
 ## Code quality
 
+- [ ] Expand Wikipedia API typing to cover quick search, media, and API error responses.
 - [ ] Add explicit TypeScript types for parsed article content entries.
 - [ ] Replace array-based content tuples with named objects.
   - Example: `{ type: 'paragraph', html: string }`.
 - [ ] Move article parsing logic out of `+page.svelte` into a reusable library module.
-- [ ] Add a dedicated Wikipedia API response type layer.
 - [ ] Add error handling around `fetch` and JSON parsing.
 - [ ] Normalize formatting across Svelte, TypeScript, and CSS files.
-- [ ] Remove unused imports, including any imports that are not referenced.
 - [ ] Consider adding a formatter such as Prettier.
 - [ ] Consider adding linting with ESLint.
 

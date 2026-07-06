@@ -8,6 +8,17 @@
     type ContentSection = [string, string, string?];
     type Breadcrumb = [string, string, string];
 
+    const excludedContentSelector = [
+        ".infobox",
+        ".sidebar",
+        ".navbox",
+        ".metadata",
+        ".ambox",
+        ".hatnote",
+        ".mw-editsection",
+        "table",
+    ].join(", ");
+
     let title = $state("");
     let content = $state<ContentSection[]>([]);
     let breadcrumbs = $state<Breadcrumb[]>([]);
@@ -141,7 +152,9 @@
 
         let elem = document.createElement("div");
         elem.innerHTML = fetchedContent;
-        console.log(elem.textContent);
+
+        elem.querySelectorAll(excludedContentSelector).forEach((element) => element.remove());
+
         for (const child of elem.children[0].children) {
             if (
                 child.classList.contains("plainlist") ||
@@ -155,7 +168,7 @@
         let images = elem.querySelectorAll('img[alt*="Edit"]');
         images.forEach((img) => img.remove());
 
-        let selectors = "p, h1, h2, h3, ul, ol, img";
+        let selectors = "p, h1, h2, h3, h4, h5, h6, ul, ol, img";
         if (elem.textContent.startsWith("Redirect")) {
             selectors += ", a";
         }
@@ -165,6 +178,15 @@
         breadcrumbs = [];
         content = [];
         for (const element of elements) {
+            const isReferenceList =
+                element.tagName === "OL" &&
+                (element.classList.contains("references") || element.closest(".reflist") !== null);
+            const isNestedList =
+                (element.tagName === "UL" || element.tagName === "OL") && element.parentElement?.closest("li") !== null;
+            const isExcludedElement = element.closest(excludedContentSelector) !== null;
+
+            if (isExcludedElement && !isReferenceList) continue;
+
             if (element.tagName === "IMG") {
                 if (firstImg.length === 0) {
                     firstImg = (element as HTMLImageElement).src;
@@ -197,19 +219,11 @@
                 content.push([element.tagName, element.textContent ?? "", element.id]);
                 breadcrumbs.push([element.textContent ?? "", element.id, element.tagName]);
                 words += (element.textContent ?? "").split(" ").length;
-            } else if (element.tagName === "UL") {
-                if (
-                    element.parentElement?.parentElement?.tagName !== "UL" &&
-                    element.parentElement?.parentElement?.tagName !== "LI" &&
-                    element.parentElement?.parentElement?.tagName !== "DIV"
-                ) {
-                    if (
-                        !Array.from(element.parentElement?.classList ?? []).some((cls) => cls.includes("bar")) ||
-                        element.innerHTML.includes("collapsable-list")
-                    ) {
-                        content.push([element.tagName, element.innerHTML]);
-                        words += element.textContent.split(" ").length;
-                    }
+            } else if (element.tagName === "UL" || element.tagName === "OL") {
+                if (!isNestedList && element.textContent.trim().length > 0) {
+                    content.push([element.tagName, element.innerHTML]);
+                    words += element.textContent.split(" ").length;
+                    references += element.querySelectorAll("a").length;
                 }
             }
         }
@@ -283,6 +297,10 @@
                     <ul>
                         {@html section[1]}
                     </ul>
+                {:else if section[0] === "OL"}
+                    <ol>
+                        {@html section[1]}
+                    </ol>
                 {/if}
             {/if}
         {/each}

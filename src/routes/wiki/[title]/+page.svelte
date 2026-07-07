@@ -47,6 +47,63 @@
         return collapsedSections.includes(id);
     }
 
+    function getAdjacentImages(index: number) {
+        const images: ContentSection[] = [];
+
+        for (let i = index; i < content.length && content[i][0] === "IMG"; i++) {
+            images.push(content[i]);
+        }
+
+        return images;
+    }
+
+    function normalizeImageSrc(src: string) {
+        if (src.startsWith("//")) return `https:${src}`;
+        return src;
+    }
+
+    function getHigherResolutionWikimediaImageSrc(src: string) {
+        const normalizedSrc = normalizeImageSrc(src);
+        const targetWidth = 960;
+
+        try {
+            const url = new URL(normalizedSrc);
+            if (url.hostname !== "upload.wikimedia.org" || !url.pathname.includes("/thumb/")) {
+                return normalizedSrc;
+            }
+
+            const pathParts = url.pathname.split("/");
+            const fileName = pathParts[pathParts.length - 1];
+            const resizedFileName = fileName.replace(/^\d+px-/, `${targetWidth}px-`);
+
+            return `${url.origin}${pathParts.slice(0, -1).join("/")}/${resizedFileName}`;
+        } catch {
+            return normalizedSrc;
+        }
+    }
+
+    function getBestImageSrc(image: HTMLImageElement) {
+        const srcsetCandidates = image.srcset
+            .split(",")
+            .map((candidate) => candidate.trim().split(/\s+/)[0])
+            .filter(Boolean);
+        const largestSrcsetCandidate = srcsetCandidates.at(-1);
+
+        return getHigherResolutionWikimediaImageSrc(largestSrcsetCandidate ?? image.src);
+    }
+
+    function isHeading(tag: string) {
+        return /^H[1-6]$/.test(tag);
+    }
+
+    function isFoldableHeading(tag: string) {
+        return /^H[1-4]$/.test(tag);
+    }
+
+    function getHeadingElement(tag: string) {
+        return tag.toLowerCase();
+    }
+
     function getHeadingLevel(tag: string) {
         return Number(tag.replace("H", ""));
     }
@@ -189,32 +246,37 @@
         }
     }
 
-    function getParentH2IdFromIndex(index: number) {
-        for (let i = index; i >= 0; i--) {
-            const section = content[i];
+    function getAncestorSectionIdsFromIndex(index: number) {
+        const ancestors = new Set<string>();
+        const section = content[index];
+        let childLevel = isHeading(section[0]) ? getHeadingLevel(section[0]) : 7;
 
-            if (section[0] === "H2") {
-                return section[2] ?? "";
+        for (let i = index - 1; i >= 0; i--) {
+            const ancestor = content[i];
+            if (!isFoldableHeading(ancestor[0])) continue;
+
+            const ancestorLevel = getHeadingLevel(ancestor[0]);
+            if (ancestorLevel < childLevel) {
+                const ancestorId = ancestor[2];
+                if (ancestorId) ancestors.add(ancestorId);
+                childLevel = ancestorLevel;
             }
         }
 
-        return "";
+        return ancestors;
     }
 
-    function getParentH2Id(id: string) {
+    function getAncestorSectionIds(id: string) {
         const sectionIndex = content.findIndex((section) => section[2] === id);
-        if (sectionIndex === -1) return "";
+        if (sectionIndex === -1) return new Set<string>();
 
-        return getParentH2IdFromIndex(sectionIndex);
+        return getAncestorSectionIdsFromIndex(sectionIndex);
     }
 
-    function isHiddenByCollapsedH2(index: number) {
-        if (content[index][0] === "H2") return false;
+    function isHiddenByCollapsedSection(index: number) {
+        const ancestorIds = getAncestorSectionIdsFromIndex(index);
 
-        const parentH2Id = getParentH2IdFromIndex(index);
-        if (!parentH2Id) return false;
-
-        return collapsedSections.includes(parentH2Id);
+        return collapsedSections.some((sectionId) => ancestorIds.has(sectionId));
     }
 
     async function openBreadcrumb(id: string, event: MouseEvent) {
@@ -223,9 +285,9 @@
         expandBreadcrumbForJump(id);
         await tick();
 
-        const parentH2Id = getParentH2Id(id);
-        if (parentH2Id && collapsedSections.includes(parentH2Id)) {
-            collapsedSections = collapsedSections.filter((sectionId) => sectionId !== parentH2Id);
+        const ancestorSectionIds = getAncestorSectionIds(id);
+        if (collapsedSections.some((sectionId) => ancestorSectionIds.has(sectionId))) {
+            collapsedSections = collapsedSections.filter((sectionId) => !ancestorSectionIds.has(sectionId));
             await tick();
         }
 
@@ -314,9 +376,10 @@
                             src.includes(pattern),
                         );
 
-                    const src = (element as HTMLImageElement).src;
+                    const image = element as HTMLImageElement;
+                    const src = getBestImageSrc(image);
                     if (!isBlockedImage(src)) {
-                        content.push(["IMG", src]);
+                        content.push(["IMG", src, image.alt]);
                     }
                 }
             } else if (element.tagName === "P") {
@@ -366,52 +429,45 @@
         <hr />
 
         {#each content as section, i}
-            {#if !isHiddenByCollapsedH2(i)}
+            {#if !isHiddenByCollapsedSection(i)}
                 {#if section[0] === "IMG"}
-                    {#if i > 0 && content[i - 1][0] !== "IMG"}
-                        <br />
+                    {#if i === 0 || content[i - 1][0] !== "IMG"}
+                        {@const adjacentImages = getAdjacentImages(i)}
+                        <figure class={`wiki-images ${adjacentImages.length > 1 ? "adjacent-images" : ""}`}>
+                            {#each adjacentImages as image}
+                                <img alt={image[2] ?? ""} src={image[1]} loading="lazy" decoding="async" />
+                            {/each}
+                        </figure>
                     {/if}
-
-                    <img alt="" src={section[1]} class="img" />
-
-                    {#if !(i > 0 && i < content.length - 1 && content[i - 1][0] !== "IMG" && content[i + 1][0] !== "IMG")}
-                        <br />
-                    {/if}
-                    <br />
                 {:else if section[0] === "P"}
                     <p>
                         {@html section[1]}
                     </p>
                     {#if i < content.length - 1 && content[i + 1][0] === "P"}<br />{/if}
-                {:else if section[0] === "H1"}
-                    <h1 id={section[2]}>{section[1]}</h1>
-                {:else if section[0] === "H2"}
-                    <h2 id={section[2]}>
-                        <br />
-                        <button
-                            class="chev"
-                            type="button"
-                            aria-label={isSectionCollapsed(section[2] ?? "") ? "Expand section" : "Collapse section"}
-                            aria-expanded={!isSectionCollapsed(section[2] ?? "")}
-                            onclick={() => toggleSection(section[2] ?? "")}
-                        >
-                            <img
-                                alt=""
-                                src={isSectionCollapsed(section[2] ?? "")
-                                    ? "/icon/chev_close.svg"
-                                    : "/icon/chev_open.svg"}
-                                class="icon"
-                            />
-                        </button>{section[1]}
-                    </h2>
-                {:else if section[0] === "H3"}
-                    <h3 id={section[2]}>{section[1]}</h3>
-                {:else if section[0] === "H4"}
-                    <h4 id={section[2]}>{section[1]}</h4>
-                {:else if section[0] === "H5"}
-                    <h5 id={section[2]}>{section[1]}</h5>
-                {:else if section[0] === "H6"}
-                    <h6 id={section[2]}>{section[1]}</h6>
+                {:else if isHeading(section[0])}
+                    {#if section[0] === "H1"}<br />{/if}
+                    <svelte:element this={getHeadingElement(section[0])} id={section[2]}>
+                        {#if section[0] === "H2"}<br />{/if}
+                        {#if isFoldableHeading(section[0])}
+                            <button
+                                class="chev"
+                                type="button"
+                                aria-label={isSectionCollapsed(section[2] ?? "")
+                                    ? "Expand section"
+                                    : "Collapse section"}
+                                aria-expanded={!isSectionCollapsed(section[2] ?? "")}
+                                onclick={() => toggleSection(section[2] ?? "")}
+                            >
+                                <img
+                                    alt=""
+                                    src={isSectionCollapsed(section[2] ?? "")
+                                        ? "/icon/chev_close.svg"
+                                        : "/icon/chev_open.svg"}
+                                    class="icon"
+                                />
+                            </button>
+                        {/if}{section[1]}
+                    </svelte:element>
                 {:else if section[0] === "A"}
                     <a href={section[2]}>{section[1]}</a>
                 {:else if section[0] === "UL"}
@@ -696,9 +752,18 @@
         }
     }
 
-    .img {
+    .wiki-images {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+    }
+
+    .wiki-images img {
         border-radius: 9px;
-        display: inline-block;
+        display: block;
         transition: 0.2s ease;
         cursor: pointer;
         transform-origin: center;
@@ -706,10 +771,19 @@
         outline: solid var(--secondary) 1.5px;
         box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 12px 1px;
         max-width: 100%;
+        max-height: 70vh;
+        height: auto;
+        object-fit: contain;
         opacity: 0.9;
     }
 
-    .img:hover {
+    .wiki-images.adjacent-images img {
+        flex: 0 1 calc(50% - 0.4rem);
+        min-width: min(12rem, 100%);
+        max-width: calc(50% - 0.4rem);
+    }
+
+    .wiki-images img:hover {
         transform: scale(1.015);
         opacity: 1;
     }
@@ -829,6 +903,11 @@
             min-width: min(82vw, 280px);
             max-width: min(82vw, 280px);
             height: 60%;
+        }
+
+        .wiki-images.adjacent-images img {
+            flex-basis: 100%;
+            max-width: 100%;
         }
     }
 </style>

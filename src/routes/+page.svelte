@@ -9,12 +9,6 @@
         `Lemma is a private, fast, and beautifully designed Wikipedia wrapper that makes exploring knowledge feel effortless. Lemma provides a clean, focused reading experience with instant access to the information you want, without noise or distractions.`.split(
             " ",
         );
-
-    onMount(async () => {
-        const api = new WikipediaAPI();
-        // console.log(await api.getSearchTitles("potato"));
-        console.log(await api.getPageContent("Potato"));
-    });
 </script>
 
 <div id="hero">
@@ -43,6 +37,7 @@
 
         h1 {
             font-size: 3rem;
+            font-weight: 400;
             text-align: center;
             margin-bottom: 0.35rem;
         }

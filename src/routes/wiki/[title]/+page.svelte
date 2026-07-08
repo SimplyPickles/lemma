@@ -223,6 +223,10 @@
         autoExpandedBreadcrumbs = [...autoExpandedSet];
     }
 
+    function resetArticleScroll() {
+        if (pageContainer) pageContainer.scrollTop = 0;
+    }
+
     function updateActiveBreadcrumb() {
         let activeId = breadcrumbs[0]?.[1] ?? "";
         const scrollOffset = 140;
@@ -313,10 +317,12 @@
     });
 
     async function loadPage() {
+        resetArticleScroll();
         words = 0;
         references = 0;
         readingTime = 0;
         firstImg = "";
+        scrollElement = "";
         collapsedSections = [];
         collapsedBreadcrumbs = [];
         autoExpandedBreadcrumbs = [];

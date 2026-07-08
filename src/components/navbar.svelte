@@ -20,6 +20,7 @@
 <style>
     #navbar {
         position: fixed;
+        user-select: none;
         width: 100%;
         height: 52px;
         background: color-mix(in oklch, var(--page-bg) 80%, transparent);
@@ -33,6 +34,7 @@
             position: absolute;
             cursor: pointer;
             right: 20px;
+
             height: 100%;
             width: fit-content;
             top: 0;

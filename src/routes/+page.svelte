@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import "../app.css";
-    import Searchbar from "../components/searchbar.svelte";
+    import Searchbar from "../components/search/searchbar.svelte";
     import { WikipediaAPI } from "$lib/api/wikipedia";
     import Navbar from "../components/navbar.svelte";
 

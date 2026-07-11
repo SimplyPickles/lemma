@@ -17,14 +17,14 @@
     <Navbar></Navbar>
     <h1>404</h1>
 
-    <p>
+    <p aria-label={words.join(" ")}>
         {#each words as w, i}
             <span style="animation-delay: {i * 0.005}s">{w}{i < words.length - 1 ? " " : ""}</span>
         {/each}
     </p>
 
     <br />
-    <a href="/">{homeText}</a>
+    <a href="/" aria-label="Return home">{homeText}</a>
 </div>
 
 <style>

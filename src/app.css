@@ -17,11 +17,6 @@
     border-radius: 10px;
 }
 
-/*
-::-webkit-scrollbar-thumb:hover {
-    background: #b30000;
-}*/
-
 :root {
     --hue: 75;
 
@@ -129,20 +124,10 @@ mark {
     background: var(--secondary);
 }
 
-/*input,
-button {
-    background: oklch(0.99 0.02 var(--hue));
-    border: solid 1px rgba(0, 0, 0, 0.25);
-    border-radius: 9px;
-    padding: 4px 32px;
-}
-
 blockquote {
     margin-left: 2.5rem;
     border-left: oklch(0.9 0.075 var(--hue));
 }
-
-/*@media (prefers-color-scheme: dark) {}*/
 
 @keyframes font-weight-wave {
     0%,

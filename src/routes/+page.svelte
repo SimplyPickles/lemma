@@ -3,15 +3,18 @@
     import Searchbar from "../components/search/Searchbar.svelte";
     import Navbar from "../components/Navbar.svelte";
 
-    let words =
+    let description =
         `Lemma is a private, fast, and beautifully designed Wikipedia wrapper that makes exploring knowledge feel effortless. Lemma provides a clean, focused reading experience with instant access to the information you want, without noise or distractions.`.split(
             " ",
         );
 </script>
 
 <div id="hero">
+    <!-- navigation -->
     <title>Lemma</title>
     <Navbar></Navbar>
+
+    <!-- heading and information -->
     <h1 aria-label="Lemma" id="header">
         <span class="char" style="--i: 0" aria-hidden="true">L</span>
         <span class="char" style="--i: 1" aria-hidden="true">e</span>
@@ -19,12 +22,14 @@
         <span class="char" style="--i: 3" aria-hidden="true">m</span>
         <span class="char" style="--i: 4" aria-hidden="true">a</span>
     </h1>
-    <p>
-        {#each words as w, i}
-            <span style="animation-delay: {i * 0.005}s">{w}{i < words.length - 1 ? " " : ""}</span>
+
+    <p aria-label={description.join(" ")}>
+        {#each description as w, i}
+            <span style="animation-delay: {i * 0.005}s">{w}{i < description.length - 1 ? " " : ""}</span>
         {/each}
     </p>
 
+    <!-- spacing and search -->
     <br />
     <br />
     <Searchbar></Searchbar>

@@ -15,9 +15,9 @@
     </a>
 
     <span id="buttons">
-        <a href="/tools">Tools</a>
-        <a href="/about">About</a>
-        <a href="/options">Options</a>
+        <!-- <a href="/tools">Tools</a> -->
+        <a href="/">About</a>
+        <!-- <a href="/options">Options</a> -->
     </span>
 </div>
 

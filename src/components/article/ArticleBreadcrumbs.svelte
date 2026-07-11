@@ -230,6 +230,7 @@
         }
     }
 
+    /* small screen breadcrumbs */
     @media (max-width: 1050px) {
         #breadcrumbs {
             left: 0;
@@ -237,7 +238,7 @@
             width: 280px;
             min-width: 280px;
             max-width: 280px;
-            height: min(72%, 620px);
+            max-height: min(72%, 620px);
             padding: 0.9rem 0.85rem;
             background: color-mix(in oklch, var(--page-bg) 92%, white 8%);
             border: solid 1px var(--secondary);
@@ -245,10 +246,23 @@
             border-radius: 0 9px 9px 0;
             box-shadow: 0 8px 24px var(--shadow-color);
             transform: translateX(calc(-100% + 34px));
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
+            transition: 0.15s ease-in;
             z-index: 20;
+        }
+
+        @media (max-width: 600px) {
+            #breadcrumbs {
+                margin-top: 80vh;
+                bottom: 96px;
+                max-height: 32px;
+            }
+
+            #breadcrumbs:hover,
+            #breadcrumbs:focus-within {
+                animation: openblur 0.3s ease;
+                max-height: min(72%, 620px);
+                margin-top: calc(80vh - min(72%, 620px) * 1.5);
+            }
         }
 
         #breadcrumbs:hover,
@@ -259,6 +273,9 @@
 
         #breadcrumbs::after {
             content: "Sections";
+            @media (max-width: 600px) {
+                content: "Sec";
+            }
             position: absolute;
             writing-mode: vertical-rl;
             text-orientation: mixed;
@@ -286,9 +303,6 @@
         #breadcrumbs #crumbFrame {
             width: calc(100% - 34px);
             opacity: 0;
-            transition:
-                opacity 0.15s ease,
-                width 0.2s ease;
         }
 
         #breadcrumbs:hover b,
@@ -300,6 +314,7 @@
         }
     }
 
+    /* large screen breadcrumbs */
     @media (max-width: 640px) {
         #breadcrumbs {
             top: 72px;
@@ -307,6 +322,21 @@
             min-width: min(82vw, 280px);
             max-width: min(82vw, 280px);
             height: 60%;
+        }
+    }
+
+    @keyframes openblur {
+        0% {
+            filter: blur(4px);
+            opacity: 0;
+        }
+
+        60% {
+            filter: blur(1px);
+        }
+
+        100% {
+            filter: blur(0px);
         }
     }
 </style>

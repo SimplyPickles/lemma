@@ -58,19 +58,19 @@
 
     .title {
         position: absolute;
-        top: 4px;
-        left: 44px;
+        top: 3px;
+        left: 48px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         font-family: gambetta;
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 
     .desc {
         position: absolute;
-        bottom: 3px;
-        left: 44px;
+        bottom: 4px;
+        left: 48px;
         right: 8px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -83,14 +83,14 @@
     img,
     .placeholder {
         position: absolute;
-        left: 3.5px;
-        top: 3.5px;
-        width: 32px;
-        height: 32px;
-        border-radius: 7px;
-        border: solid rgba(0, 0, 0, 0.1) 0.5px;
-        outline: solid var(--secondary) 0.5px;
-        box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 12px 1px;
+        left: 0;
+        top: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 7px 0 0 7px;
+        /*border: solid rgba(0, 0, 0, 0.1) 0.5px;*/
+        /*outline: solid var(--secondary) 0.5px;*/
+        /*box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 12px 1px;*/
         background: var(--secondary);
     }
 

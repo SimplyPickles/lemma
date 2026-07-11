@@ -65,6 +65,8 @@
         white-space: nowrap;
         font-family: gambetta;
         font-size: 0.9rem;
+        text-overflow: ellipsis;
+        max-width: 60%;
     }
 
     .desc {
@@ -72,12 +74,13 @@
         bottom: 4px;
         left: 48px;
         right: 8px;
-        overflow: hidden;
-        text-overflow: ellipsis;
         white-space: nowrap;
         font-size: 0.75rem;
         font-weight: 350;
         opacity: 0.75;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
     }
 
     img,

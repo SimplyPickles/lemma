@@ -74,7 +74,7 @@
         width: fit-content;
         max-width: calc(30% - 5ch - 10%);
         min-width: calc(30% - 5ch - 10%);
-        overflow: hidden;
+        overflow: visible;
 
         b {
             display: block;
@@ -85,10 +85,12 @@
         #crumbFrame {
             position: relative;
             height: calc(100% - 2.5rem);
-            overflow: hidden;
+            overflow: visible;
         }
 
         #crumbs {
+            box-sizing: border-box;
+            width: 100%;
             scroll-behavior: smooth;
             overscroll-behavior: contain;
             height: 100%;

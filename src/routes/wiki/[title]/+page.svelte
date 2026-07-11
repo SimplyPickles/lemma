@@ -17,6 +17,7 @@
     let title = $state("");
     let content = $state<ArticleBlock[]>([]);
     let breadcrumbs = $state<ArticleHeading[]>([]);
+    let isLoading = $state(true);
 
     let words = $state(0);
     let references = $state(0);
@@ -96,6 +97,10 @@
         if (pageContainer) pageContainer.scrollTop = 0;
     }
 
+    function getWikipediaSourceUrl(articleTitle: string) {
+        return `https://en.wikipedia.org/wiki/${encodeURIComponent(articleTitle.replaceAll(" ", "_"))}`;
+    }
+
     function updateActiveBreadcrumb() {
         let activeId = breadcrumbs[0]?.id ?? "";
         const scrollOffset = 140;
@@ -161,26 +166,39 @@
 
     async function loadPage() {
         resetArticleScroll();
+        isLoading = true;
+        title = "";
+        content = [];
+        breadcrumbs = [];
+        words = 0;
+        references = 0;
+        readingTime = 0;
+        scrollElement = "";
         collapsedSections = [];
         collapsedBreadcrumbs = [];
         autoExpandedBreadcrumbs = [];
 
-        const api = new WikipediaAPI();
-        const pageContent = await api.getPageContent(page.params.title ?? "");
-        const article = parseArticle(pageContent, page.url.hash);
+        try {
+            const api = new WikipediaAPI();
+            const pageContent = await api.getPageContent(page.params.title ?? "");
+            const article = parseArticle(pageContent, page.url.hash);
 
-        title = article.title;
-        content = article.blocks;
-        breadcrumbs = article.headings;
-        words = article.stats.words;
-        references = article.stats.links;
-        readingTime = article.stats.readingMinutes;
-        scrollElement = article.scrollTarget;
-        document.title = `${title} • Lemma`;
+            title = article.title;
+            content = article.blocks;
+            breadcrumbs = article.headings;
+            words = article.stats.words;
+            references = article.stats.links;
+            readingTime = article.stats.readingMinutes;
+            scrollElement = article.scrollTarget;
+            document.title = `${title} • Lemma`;
 
-        activeBreadcrumbId = breadcrumbs[0]?.id ?? "";
-        collapsedBreadcrumbs = getCollapsibleBreadcrumbIds();
-        syncAutoExpandedBreadcrumbs(activeBreadcrumbId);
+            activeBreadcrumbId = breadcrumbs[0]?.id ?? "";
+            collapsedBreadcrumbs = getCollapsibleBreadcrumbIds();
+            syncAutoExpandedBreadcrumbs(activeBreadcrumbId);
+        } finally {
+            isLoading = false;
+        }
+
         await tick();
         updateActiveBreadcrumb();
     }
@@ -192,25 +210,43 @@
     <Navbar></Navbar>
     <title>{page.params.title} • Lemma</title>
     <div id="contentContainer">
-        <h1 id="title">{title}</h1>
-        <mini>{words} words · {references} links · {readingTime} min read</mini>
-        <hr />
+        {#if isLoading}
+            <div class="article-skeleton" aria-label="Loading article" aria-busy="true">
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-meta"></div>
+                <div class="skeleton skeleton-rule"></div>
+                {#each [92, 100, 84, 96, 72, 98, 88, 64] as width}
+                    <div class="skeleton skeleton-line" style={`--skeleton-width: ${width}%`}></div>
+                {/each}
+            </div>
+        {:else}
+            <h1 id="title">{title}</h1>
+            <div class="article-meta">
+                <mini>{words} words · {references} links · {readingTime} min read</mini>
+                <a class="source-link" href={getWikipediaSourceUrl(title)} target="_blank" rel="noreferrer"
+                    >Wikipedia source ↗</a
+                >
+            </div>
+            <hr />
 
-        <ArticleContent blocks={content} collapsedSectionIds={collapsedSections} onToggleSection={toggleSection} />
+            <ArticleContent blocks={content} collapsedSectionIds={collapsedSections} onToggleSection={toggleSection} />
 
-        {#each { length: 12 }}
-            <br />
-        {/each}
+            {#each { length: 12 }}
+                <br />
+            {/each}
+        {/if}
     </div>
 
-    <ArticleBreadcrumbs
-        {title}
-        headings={breadcrumbs}
-        activeId={activeBreadcrumbId}
-        collapsedIds={collapsedBreadcrumbs}
-        onToggle={toggleBreadcrumb}
-        onOpen={openBreadcrumb}
-    />
+    {#if !isLoading}
+        <ArticleBreadcrumbs
+            {title}
+            headings={breadcrumbs}
+            activeId={activeBreadcrumbId}
+            collapsedIds={collapsedBreadcrumbs}
+            onToggle={toggleBreadcrumb}
+            onOpen={openBreadcrumb}
+        />
+    {/if}
 </div>
 
 <style>
@@ -239,6 +275,72 @@
 
     #title {
         width: calc(110% - 5vw);
+    }
+
+    .article-meta {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .source-link {
+        flex: 0 0 auto;
+        min-width: 8rem;
+        font-family: gambetta;
+        font-size: 0.78rem;
+        text-align: center;
+        opacity: 0.7;
+    }
+
+    .article-skeleton {
+        padding-top: 1.25rem;
+    }
+
+    .skeleton {
+        background: linear-gradient(
+            90deg,
+            color-mix(in oklch, var(--secondary) 65%, transparent) 25%,
+            color-mix(in oklch, var(--secondary) 35%, var(--page-bg)) 50%,
+            color-mix(in oklch, var(--secondary) 65%, transparent) 75%
+        );
+        background-size: 200% 100%;
+        border-radius: 6px;
+        animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    }
+
+    .skeleton-title {
+        width: min(70%, 22rem);
+        height: 2.5rem;
+        margin-bottom: 0.85rem;
+    }
+
+    .skeleton-meta {
+        width: min(42%, 12rem);
+        height: 0.8rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .skeleton-rule {
+        width: 75%;
+        height: 2px;
+        margin-bottom: 2rem;
+    }
+
+    .skeleton-line {
+        width: var(--skeleton-width);
+        height: 0.9rem;
+        margin-bottom: 1.05rem;
+    }
+
+    @keyframes skeleton-shimmer {
+        from {
+            background-position: 200% 0;
+        }
+
+        to {
+            background-position: -200% 0;
+        }
     }
 
     hr {

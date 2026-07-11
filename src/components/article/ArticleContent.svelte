@@ -10,6 +10,20 @@
     }
 
     let { blocks, collapsedSectionIds, onToggleSection }: Props = $props();
+    let copiedHeadingId = $state("");
+    let copiedResetTimer: ReturnType<typeof setTimeout>;
+
+    async function copySectionLink(id: string) {
+        const url = new URL(window.location.href);
+        url.hash = id;
+
+        await navigator.clipboard.writeText(url.toString());
+        copiedHeadingId = id;
+        clearTimeout(copiedResetTimer);
+        copiedResetTimer = setTimeout(() => {
+            copiedHeadingId = "";
+        }, 1600);
+    }
 
     function isSectionCollapsed(id: string) {
         return collapsedSectionIds.includes(id);
@@ -69,6 +83,16 @@
                         />
                     </button>
                 {/if}{section.heading.text}
+                <button
+                    class="copy-section"
+                    class:copied={copiedHeadingId === section.heading.id}
+                    type="button"
+                    aria-label={`Copy link to ${section.heading.text}`}
+                    title={copiedHeadingId === section.heading.id ? "Copied!" : "Copy link to section"}
+                    onclick={() => copySectionLink(section.heading.id)}
+                >
+                    {copiedHeadingId === section.heading.id ? "Copied!" : "#"}
+                </button>
             </svelte:element>
         {:else if section.type === "link"}
             <a href={section.href}>{section.text}</a>
@@ -104,6 +128,50 @@
         top: calc(-12.5% + 2px);
 
         width: 125%;
+    }
+
+    .copy-section {
+        margin-left: 0.5rem;
+        padding: 0.1rem 0.3rem;
+        border: none;
+        background: none;
+        color: inherit;
+        font-family: gambetta;
+        font-size: 0.72rem;
+        font-weight: 500;
+        line-height: 1;
+        cursor: pointer;
+        opacity: 0;
+        vertical-align: middle;
+        transition: opacity 0.15s ease;
+    }
+
+    :global(h1:hover) .copy-section,
+    :global(h2:hover) .copy-section,
+    :global(h3:hover) .copy-section,
+    :global(h4:hover) .copy-section,
+    :global(h5:hover) .copy-section,
+    :global(h6:hover) .copy-section,
+    .copy-section:focus-visible,
+    .copy-section.copied {
+        opacity: 0.65;
+    }
+
+    .copy-section.copied {
+        color: oklch(0.45 0.18 var(--hue));
+        animation: copy-confirm 0.2s ease-in;
+    }
+
+    @keyframes copy-confirm {
+        0% {
+            opacity: 0;
+            transform: scale(0.8);
+            filter: blur(2px);
+        }
+
+        100% {
+            transform: translateY(0) scale(1);
+        }
     }
 
     .wiki-images {

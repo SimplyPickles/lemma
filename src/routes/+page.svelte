@@ -1,9 +1,7 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import "../app.css";
-    import Searchbar from "../components/search/searchbar.svelte";
-    import { WikipediaAPI } from "$lib/api/wikipedia";
-    import Navbar from "../components/navbar.svelte";
+    import Searchbar from "../components/search/Searchbar.svelte";
+    import Navbar from "../components/Navbar.svelte";
 
     let words =
         `Lemma is a private, fast, and beautifully designed Wikipedia wrapper that makes exploring knowledge feel effortless. Lemma provides a clean, focused reading experience with instant access to the information you want, without noise or distractions.`.split(
@@ -14,13 +12,13 @@
 <div id="hero">
     <title>Lemma</title>
     <Navbar></Navbar>
-    <div id="header">
+    <h1 aria-label="Lemma" id="header">
         <span class="char" style="--i: 0" aria-hidden="true">L</span>
         <span class="char" style="--i: 1" aria-hidden="true">e</span>
         <span class="char" style="--i: 2" aria-hidden="true">m</span>
         <span class="char" style="--i: 3" aria-hidden="true">m</span>
         <span class="char" style="--i: 4" aria-hidden="true">a</span>
-    </div>
+    </h1>
     <p>
         {#each words as w, i}
             <span style="animation-delay: {i * 0.005}s">{w}{i < words.length - 1 ? " " : ""}</span>
@@ -54,11 +52,11 @@
 
             .char {
                 animation: font-weight-wave 0.8s ease-in-out;
-                animation-delay: calc(0.5s + var(--i) * 0.02s);
+                animation-delay: calc(-0.1s + var(--i) * 0.04s);
 
                 display: inline-block;
-                margin-left: -0.35rem;
-                margin-right: -0.35rem;
+                margin-left: -0.3rem;
+                margin-right: -0.3rem;
                 font-weight: 250;
             }
         }
@@ -93,7 +91,7 @@
         }
 
         50% {
-            font-weight: 500;
+            font-weight: 700;
         }
     }
 </style>

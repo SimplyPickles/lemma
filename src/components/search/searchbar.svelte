@@ -1,7 +1,7 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { WikipediaAPI, type WikipediaSearchResult } from "$lib/api/wikipedia";
-    import Result from "./result.svelte";
+    import Result from "./Result.svelte";
 
     const api = new WikipediaAPI();
     const debounceMs = 200;

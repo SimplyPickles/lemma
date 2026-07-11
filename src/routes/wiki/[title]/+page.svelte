@@ -3,7 +3,7 @@
     import { page } from "$app/state";
     import { tick } from "svelte";
     import { WikipediaAPI } from "$lib/api/wikipedia";
-    import Navbar from "../../../components/navbar.svelte";
+    import Navbar from "../../../components/Navbar.svelte";
 
     type ContentSection = [string, string, string?];
     type Breadcrumb = [string, string, string];

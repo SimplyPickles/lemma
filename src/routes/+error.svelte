@@ -1,6 +1,6 @@
 <script lang="ts">
     import "../app.css";
-    import Navbar from "../components/navbar.svelte";
+    import Navbar from "../components/Navbar.svelte";
 
     const homeMessages = ["Go back home", "Return to ground zero", "Take me back", "Home sweet home"];
 

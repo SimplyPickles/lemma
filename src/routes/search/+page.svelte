@@ -1,6 +1,6 @@
 <script>
     import "../../app.css";
-    import Searchbar from "../../components/search/searchbar.svelte";
+    import Searchbar from "../../components/search/Searchbar.svelte";
 </script>
 
 <div id="searchContainer">

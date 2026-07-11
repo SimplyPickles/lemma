@@ -9,17 +9,19 @@
 }
 
 ::-webkit-scrollbar {
-    width: 2px;
+    width: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
     background: var(--secondary);
     border-radius: 10px;
 }
+
 /*
 ::-webkit-scrollbar-thumb:hover {
     background: #b30000;
 }*/
+
 :root {
     --hue: 75;
 
@@ -127,11 +129,6 @@ mark {
     background: var(--secondary);
 }
 
-*:focus {
-    outline: solid 2px var(--secondary);
-    border-radius: 3px;
-}
-
 /*input,
 button {
     background: oklch(0.99 0.02 var(--hue));
@@ -146,3 +143,14 @@ blockquote {
 }
 
 /*@media (prefers-color-scheme: dark) {}*/
+
+@keyframes font-weight-wave {
+    0%,
+    100% {
+        font-weight: 250;
+    }
+
+    50% {
+        font-weight: 700;
+    }
+}

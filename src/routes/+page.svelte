@@ -83,15 +83,4 @@
             opacity: 1;
         }
     }
-
-    @keyframes font-weight-wave {
-        0%,
-        100% {
-            font-weight: 250;
-        }
-
-        50% {
-            font-weight: 700;
-        }
-    }
 </style>

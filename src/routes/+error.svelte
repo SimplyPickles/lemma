@@ -29,7 +29,8 @@
 
 <style>
     #container {
-        position: absolute;
+        position: fixed;
+        overflow: none;
 
         width: 55%;
 

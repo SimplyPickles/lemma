@@ -269,7 +269,7 @@
 
 <style>
     #pageContainer {
-        position: absolute;
+        position: fixed;
         font-family: satoshi;
         width: 100%;
         height: 100%;

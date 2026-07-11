@@ -37,7 +37,8 @@
 
 <style>
     #hero {
-        position: absolute;
+        position: fixed;
+        overflow: none;
 
         width: 55%;
 

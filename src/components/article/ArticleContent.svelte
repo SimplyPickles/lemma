@@ -210,7 +210,7 @@
         outline: solid var(--secondary) 0.5px;
         box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 12px 1px;
         max-width: 100%;
-        max-height: 70vh;
+        max-height: 70dvh;
         height: auto;
         object-fit: contain;
     }

@@ -4,7 +4,7 @@
     import Navbar from "../components/Navbar.svelte";
 
     let description =
-        `Lemma is a private, fast, and beautifully designed Wikipedia wrapper that makes exploring knowledge feel effortless. Lemma provides a clean, focused reading experience with instant access to the information you want, without noise or distractions.`.split(
+        `Lemma is a private, fast, and beautifully designed Wikipedia wrapper that makes exploring knowledge feel effortless. Lemma provides a clean, focused reading experience with instant access to the information you want, without noise or distracrtions.`.split(
             " ",
         );
 </script>

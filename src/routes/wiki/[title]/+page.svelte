@@ -243,9 +243,7 @@
             <h1 id="title">{title}</h1>
             <div class="article-meta">
                 <mini>{words} words · {references} links · {readingTime} min read</mini>
-                <a class="source-link" href={getWikipediaSourceUrl(title)} target="_blank" rel="noreferrer"
-                    >Wikipedia source ↗</a
-                >
+                <a class="source-link" href={getWikipediaSourceUrl(title)} target="_blank" rel="noreferrer">Source</a>
             </div>
             <hr />
 

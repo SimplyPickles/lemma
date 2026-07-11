@@ -13,7 +13,7 @@
     <span id="buttons">
         <!-- <a href="/tools">Tools</a> -->
         <!-- <a href="/options">Options</a> -->
-        <a href="/">About</a>
+        <a href="/about">About</a>
     </span>
 </div>
 

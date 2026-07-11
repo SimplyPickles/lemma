@@ -24,7 +24,7 @@
     </p>
 
     <br />
-    <a href="/" aria-label="Return home">{homeText}</a>
+    <a href="/" aria-label="Go to home page">{homeText}</a>
 </div>
 
 <style>

@@ -178,7 +178,7 @@
             background: none;
             border: none;
             left: 38px;
-            top: 12px;
+            top: 10.5px;
             height: 24px;
             width: calc(100% - 62px);
             font-size: 0.9rem;

@@ -252,7 +252,7 @@
 
         @media (max-width: 600px) {
             #breadcrumbs {
-                margin-top: 80vh;
+                margin-top: 60vh;
                 bottom: 96px;
                 max-height: 32px;
             }
@@ -261,7 +261,7 @@
             #breadcrumbs:focus-within {
                 animation: openblur 0.3s ease;
                 max-height: min(72%, 620px);
-                margin-top: calc(80vh - min(72%, 620px) * 2);
+                margin-top: calc(80vh - min(72%, 620px) * 1.5);
             }
         }
 

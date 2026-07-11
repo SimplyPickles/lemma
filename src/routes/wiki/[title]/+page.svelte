@@ -304,8 +304,8 @@
     }
 
     .source-link {
-        flex: 0 0 auto;
-        min-width: 8rem;
+        position: static;
+        right: 0;
         font-family: gambetta;
         font-size: 0.78rem;
         text-align: center;

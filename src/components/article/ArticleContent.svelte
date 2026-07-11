@@ -205,7 +205,6 @@
         border-radius: 9px;
         display: block;
         transition: 0.2s ease;
-        cursor: pointer;
         transform-origin: center;
         border: solid rgba(0, 0, 0, 0.1) 0.5px;
         outline: solid var(--secondary) 0.5px;
@@ -214,7 +213,6 @@
         max-height: 70vh;
         height: auto;
         object-fit: contain;
-        opacity: 0.9;
     }
 
     .wiki-images.adjacent-images img {

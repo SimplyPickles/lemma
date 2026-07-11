@@ -143,14 +143,15 @@
 
 <style>
     #search {
-        position: relative;
-        width: 90%;
-        margin-left: 5%;
-        height: fit-content;
+        opacity: 0;
+        animation: quickappear 0.5s forwards;
+        position: fixed;
+        width: 55ch;
+        left: calc(50% - 27.5ch);
 
         @media (max-width: 600px) {
-            width: calc(140%);
-            margin-left: calc(-20%);
+            width: calc(80dvw);
+            left: calc(10dvw);
         }
     }
 
@@ -174,14 +175,17 @@
         }
 
         input {
+            font-size: 16px;
+            line-height: 1;
+            height: 24px;
+            padding: 0;
+            margin: 0;
             position: absolute;
+            left: 38px;
+            top: 12px;
+            width: calc(100% - 62px);
             background: none;
             border: none;
-            left: 38px;
-            top: 10.5px;
-            height: 24px;
-            width: calc(100% - 62px);
-            font-size: 0.9rem;
             color: var(--text-color, inherit);
         }
 

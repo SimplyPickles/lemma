@@ -145,3 +145,15 @@ blockquote {
         font-weight: 700;
     }
 }
+
+@keyframes quickappear {
+    0% {
+        opacity: 0;
+        filter: blur(2px);
+    }
+
+    100% {
+        opacity: 1;
+        filter: none;
+    }
+}

@@ -61,7 +61,6 @@
             <p>
                 {@html section.html}
             </p>
-            {#if i < blocks.length - 1 && blocks[i + 1].type === "paragraph"}<br />{/if}
         {:else if section.type === "heading"}
             {#if section.heading.tag === "H1"}<br />{/if}
             <svelte:element this={section.heading.tag.toLowerCase()} id={section.heading.id}>
@@ -203,11 +202,6 @@
         flex: 0 1 calc(50% - 0.4rem);
         min-width: min(12rem, 100%);
         max-width: calc(50% - 0.4rem);
-    }
-
-    .wiki-images img:hover {
-        transform: scale(1.015);
-        opacity: 1;
     }
 
     :global(ul:has(> li img)),

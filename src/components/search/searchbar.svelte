@@ -162,18 +162,18 @@
         img {
             position: absolute;
             user-select: none;
-            width: 32px;
-            height: 32px;
-            left: 6px;
-            top: 8px;
+            width: 24px;
+            height: 24px;
+            left: 12px;
+            top: 12px;
         }
 
         input {
             position: absolute;
             background: none;
             border: none;
-            left: 42px;
-            top: 11px;
+            left: 38px;
+            top: 12px;
             height: 24px;
             width: calc(100% - 62px);
             font-size: 0.9rem;

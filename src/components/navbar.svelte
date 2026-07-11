@@ -1,3 +1,7 @@
+<script>
+    import Searchbar from "./search/Searchbar.svelte";
+</script>
+
 <div id="navbar">
     <a id="header" href="/" aria-label="Go to home page">
         <img src="../logo.svg" alt="" />

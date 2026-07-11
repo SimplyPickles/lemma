@@ -75,6 +75,7 @@
         max-width: calc(30% - 5ch - 10%);
         min-width: calc(30% - 5ch - 10%);
         overflow: visible;
+        animation: breadcrumbs-fade-in 0.45s ease both;
 
         b {
             display: block;
@@ -214,6 +215,18 @@
             font-size: 0.68rem;
             font-weight: 400;
             margin-left: 2.1rem;
+        }
+    }
+
+    @keyframes breadcrumbs-fade-in {
+        from {
+            opacity: 0;
+            filter: blur(2px);
+        }
+
+        to {
+            opacity: 1;
+            filter: blur(0);
         }
     }
 

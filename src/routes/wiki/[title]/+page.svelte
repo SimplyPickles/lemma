@@ -18,6 +18,7 @@
     let content = $state<ArticleBlock[]>([]);
     let breadcrumbs = $state<ArticleHeading[]>([]);
     let isLoading = $state(true);
+    let skeletonWidths = $state<number[]>([]);
 
     let words = $state(0);
     let references = $state(0);
@@ -101,6 +102,20 @@
         return `https://en.wikipedia.org/wiki/${encodeURIComponent(articleTitle.replaceAll(" ", "_"))}`;
     }
 
+    function randomizeSkeletonWidths(seed: string) {
+        let state = 2166136261;
+
+        for (const character of seed) {
+            state ^= character.charCodeAt(0);
+            state = Math.imul(state, 16777619);
+        }
+
+        skeletonWidths = Array.from({ length: 8 }, () => {
+            state = Math.imul(state, 1664525) + 1013904223;
+            return 62 + ((state >>> 0) % 39);
+        });
+    }
+
     function updateActiveBreadcrumb() {
         let activeId = breadcrumbs[0]?.id ?? "";
         const scrollOffset = 140;
@@ -167,6 +182,7 @@
     async function loadPage() {
         resetArticleScroll();
         isLoading = true;
+        randomizeSkeletonWidths(page.params.title ?? "");
         title = "";
         content = [];
         breadcrumbs = [];
@@ -215,7 +231,11 @@
                 <div class="skeleton skeleton-title"></div>
                 <div class="skeleton skeleton-meta"></div>
                 <div class="skeleton skeleton-rule"></div>
-                {#each [92, 100, 84, 96, 72, 98, 88, 64] as width}
+                {#each skeletonWidths.slice(0, 5) as width}
+                    <div class="skeleton skeleton-line" style={`--skeleton-width: ${width}%`}></div>
+                {/each}
+                <br />
+                {#each skeletonWidths.slice(5) as width}
                     <div class="skeleton skeleton-line" style={`--skeleton-width: ${width}%`}></div>
                 {/each}
             </div>
@@ -264,6 +284,7 @@
     #contentContainer {
         position: absolute;
 
+        width: min(50ch, calc(100vw - 4rem));
         max-width: 50ch;
 
         top: 2.5%;
@@ -295,6 +316,18 @@
 
     .article-skeleton {
         padding-top: 1.25rem;
+        opacity: 0;
+        animation: appear 0.25s ease-out forwards;
+    }
+
+    @keyframes appear {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
     }
 
     .skeleton {
@@ -311,20 +344,22 @@
 
     .skeleton-title {
         width: min(70%, 22rem);
-        height: 2.5rem;
+        height: 2rem;
         margin-bottom: 0.85rem;
     }
 
     .skeleton-meta {
         width: min(42%, 12rem);
         height: 0.8rem;
+        margin-top: -0.4rem;
         margin-bottom: 1.25rem;
     }
 
     .skeleton-rule {
-        width: 75%;
+        width: 100%;
         height: 2px;
-        margin-bottom: 2rem;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
     }
 
     .skeleton-line {
@@ -344,48 +379,19 @@
     }
 
     hr {
-        animation: animate-hr 0.25s ease forwards;
-        animation-delay: 0.25s;
-        opacity: 0;
-    }
-
-    @keyframes animate-hr {
-        0% {
-            width: 0%;
-            opacity: 0;
-            margin-right: 100%;
-        }
-        100% {
-            opacity: 1;
-        }
+        width: 100%;
     }
 
     #contentContainer {
         h1 {
             min-height: 2rem;
             margin-bottom: -0.25rem;
-            animation: popup 0.75s ease forwards;
-            animation-delay: 0.25s;
-            opacity: 0;
         }
 
         mini {
             font-size: 0.85rem;
             font-style: italic;
             font-weight: 450;
-            animation: popup 0.75s ease forwards;
-        }
-    }
-
-    @keyframes popup {
-        0% {
-            opacity: 0;
-            filter: blur(1px);
-            transform: translateY(3px);
-        }
-
-        100% {
-            opacity: 1;
         }
     }
 

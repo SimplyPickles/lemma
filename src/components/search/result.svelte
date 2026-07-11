@@ -59,7 +59,7 @@
     .title {
         position: absolute;
         top: 0;
-        left: 48px;
+        left: 44px;
         right: 8px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -71,7 +71,7 @@
     .desc {
         position: absolute;
         bottom: 1px;
-        left: 48px;
+        left: 44px;
         right: 8px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -84,11 +84,11 @@
     img,
     .placeholder {
         position: absolute;
-        left: 4px;
-        top: 4px;
+        left: 3.5px;
+        top: 3.5px;
         width: 32px;
         height: 32px;
-        border-radius: 4px;
+        border-radius: 7px;
         border: solid rgba(0, 0, 0, 0.1) 0.5px;
         outline: solid var(--secondary) 0.5px;
         box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 12px 1px;

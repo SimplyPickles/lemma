@@ -14,7 +14,13 @@
 <div id="hero">
     <title>Lemma</title>
     <Navbar></Navbar>
-    <h1>Lemma</h1>
+    <div id="header">
+        <span class="char" style="--i: 0" aria-hidden="true">L</span>
+        <span class="char" style="--i: 1" aria-hidden="true">e</span>
+        <span class="char" style="--i: 2" aria-hidden="true">m</span>
+        <span class="char" style="--i: 3" aria-hidden="true">m</span>
+        <span class="char" style="--i: 4" aria-hidden="true">a</span>
+    </div>
     <p>
         {#each words as w, i}
             <span style="animation-delay: {i * 0.005}s">{w}{i < words.length - 1 ? " " : ""}</span>
@@ -35,11 +41,26 @@
         top: 15%;
         left: 22.5%;
 
-        h1 {
+        br {
+            user-select: none;
+        }
+
+        #header {
             font-size: 3rem;
-            font-weight: 400;
+            font-family: gambetta;
             text-align: center;
             margin-bottom: 0.35rem;
+            user-select: none;
+
+            .char {
+                animation: font-weight-wave 0.8s ease-in-out;
+                animation-delay: calc(0.5s + var(--i) * 0.02s);
+
+                display: inline-block;
+                margin-left: -0.35rem;
+                margin-right: -0.35rem;
+                font-weight: 250;
+            }
         }
 
         p {
@@ -52,16 +73,6 @@
                 animation: appear 1.5s forwards;
             }
         }
-
-        h2 {
-            text-align: center;
-            font-family: "satoshi";
-            opacity: 0.5;
-            font-size: 0.9rem;
-            width: 100%;
-            font-weight: 450;
-            margin-top: 6px;
-        }
     }
 
     @keyframes appear {
@@ -72,6 +83,17 @@
 
         100% {
             opacity: 1;
+        }
+    }
+
+    @keyframes font-weight-wave {
+        0%,
+        100% {
+            font-weight: 250;
+        }
+
+        50% {
+            font-weight: 500;
         }
     }
 </style>

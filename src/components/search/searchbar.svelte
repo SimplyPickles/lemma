@@ -7,6 +7,7 @@
     const debounceMs = 200;
     const maxResults = 5;
 
+    let inputBox: HTMLInputElement;
     let query = $state("");
     let results = $state<WikipediaSearchResult[]>([]);
     let isLoading = $state(false);
@@ -69,6 +70,17 @@
         goto(getArticlePath(trimmedTitle));
     }
 
+    function handleWindowKeydown(event: KeyboardEvent) {
+        if (event.key !== "/") return;
+
+        const target = event.target as HTMLElement;
+        if (["INPUT", "TEXTAREA"].includes(target.tagName) || target.isContentEditable) return;
+
+        event.preventDefault();
+        inputBox?.focus();
+        inputBox?.select();
+    }
+
     function handleKeydown(event: KeyboardEvent) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -90,11 +102,14 @@
     }
 </script>
 
+<svelte:window onkeydown={handleWindowKeydown} />
+
 <div id="search">
     <div id="searchbar">
         <img src="/icon/search.svg" class="icon" alt="" aria-hidden="true" />
         <input
             placeholder="Search articles, people, places..."
+            bind:this={inputBox}
             bind:value={query}
             oninput={scheduleSearch}
             onkeydown={handleKeydown}
@@ -178,11 +193,11 @@
         display: grid;
         gap: 10px;
         padding: 12px 0;
-        background: color-mix(in oklch, var(--bg-color) 92%, transparent);
-        border: solid 1px rgba(0, 0, 0, 0.1);
+        background: var(--bg-color);
+        border: solid 1px rgba(0, 0, 0, 0.15);
         border-radius: 16px;
-        box-shadow: 0px 8px 24px var(--shadow-color);
-        backdrop-filter: blur(8px);
+        box-shadow: 0px 2px 2px var(--shadow-color);
+        border-radius: 16px;
         z-index: 1;
     }
 

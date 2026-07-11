@@ -794,19 +794,31 @@
         opacity: 1;
     }
 
-    h1 {
-        min-height: 2rem;
-        margin-bottom: -0.25rem;
-        animation: popup 0.75s ease forwards;
-        animation-delay: 0.25s;
-        opacity: 0;
-    }
+    #contentContainer {
+        h1 {
+            min-height: 2rem;
+            margin-bottom: -0.25rem;
+            animation: popup 0.75s ease forwards;
+            animation-delay: 0.25s;
+            opacity: 0;
+        }
 
-    mini {
-        font-size: 0.85rem;
-        font-style: italic;
-        font-weight: 450;
-        animation: popup 0.75s ease forwards;
+        mini {
+            font-size: 0.85rem;
+            font-style: italic;
+            font-weight: 450;
+            animation: popup 0.75s ease forwards;
+        }
+
+        :global(sup.reference),
+        :global(.mw-ref) {
+            line-height: 0;
+        }
+
+        :global(sup.reference a),
+        :global(.mw-ref a) {
+            line-height: 0;
+        }
     }
 
     @keyframes popup {

@@ -42,9 +42,9 @@
         display: block;
         cursor: pointer;
         user-select: none;
-        width: 96%;
+        width: 100%;
         min-height: 40px;
-        margin-left: 2%;
+        margin-left: 0;
         color: inherit;
         text-decoration: none;
         border-radius: 10px;
@@ -58,25 +58,24 @@
 
     .title {
         position: absolute;
-        top: 0;
+        top: 4px;
         left: 44px;
-        right: 8px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         font-family: gambetta;
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .desc {
         position: absolute;
-        bottom: 1px;
+        bottom: 3px;
         left: 44px;
         right: 8px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         font-weight: 350;
         opacity: 0.75;
     }

@@ -55,6 +55,12 @@
             margin-bottom: 0.35rem;
             user-select: none;
 
+            @media (max-width: 600px) {
+                text-align: left;
+                margin-top: -2rem;
+                margin-left: calc(-20% + 4px);
+            }
+
             .char {
                 animation: font-weight-wave 0.8s ease-in-out;
                 animation-delay: calc(-0.1s + var(--i) * 0.04s);
@@ -70,6 +76,11 @@
             text-align: justify;
             max-width: 50ch;
             margin: 0 auto;
+            @media (max-width: 600px) {
+                margin-left: -20%;
+                min-width: 75vw;
+                text-align: left;
+            }
 
             span {
                 opacity: 0;

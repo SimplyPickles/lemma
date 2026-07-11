@@ -147,13 +147,18 @@
         width: 90%;
         margin-left: 5%;
         height: fit-content;
+
+        @media (max-width: 600px) {
+            width: calc(140%);
+            margin-left: calc(-20%);
+        }
     }
 
     #searchbar {
         position: relative;
         background: var(--bg-color);
         border: solid 1px rgba(0, 0, 0, 0.15);
-        border-radius: 16px;
+        border-radius: 12px;
         box-shadow: 0 12px 32px var(--shadow-color);
         width: 100%;
         height: 48px;
@@ -189,15 +194,14 @@
         position: absolute;
         top: calc(48px + 12px);
         left: 0;
-        width: 100%;
+        width: calc(100% - 12px);
         display: grid;
-        gap: 10px;
-        padding: 12px 0;
+        gap: 3px;
+        padding: 6px;
         background: var(--bg-color);
         border: solid 1px rgba(0, 0, 0, 0.15);
-        border-radius: 16px;
         box-shadow: 0 12px 32px var(--shadow-color);
-        border-radius: 16px;
+        border-radius: 12px;
         z-index: 1;
     }
 

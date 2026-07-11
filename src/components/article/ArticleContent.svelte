@@ -109,6 +109,10 @@
 
 <style>
     .chev {
+        transition:
+            filter 0.15s,
+            opacity 0.3s;
+
         position: relative;
         border: none;
         background: none;
@@ -118,6 +122,18 @@
         height: 1.5rem;
         margin-right: 0.5rem;
         margin-left: -2rem;
+    }
+
+    @media (max-width: 600px) {
+        .chev {
+            position: absolute;
+            right: 0;
+        }
+    }
+
+    .chev:active {
+        filter: blur(2px);
+        opacity: 0.5;
     }
 
     .chev img {
@@ -136,13 +152,17 @@
         background: none;
         color: inherit;
         font-family: gambetta;
-        font-size: 0.72rem;
+        font-size: 1rem;
         font-weight: 500;
         line-height: 1;
         cursor: pointer;
         opacity: 0;
         vertical-align: middle;
         transition: opacity 0.15s ease;
+
+        @media (max-width: 600px) {
+            opacity: 0.5;
+        }
     }
 
     :global(h1:hover) .copy-section,
@@ -153,7 +173,7 @@
     :global(h6:hover) .copy-section,
     .copy-section:focus-visible,
     .copy-section.copied {
-        opacity: 0.65;
+        opacity: 0.5;
     }
 
     .copy-section.copied {
@@ -164,7 +184,6 @@
     @keyframes copy-confirm {
         0% {
             opacity: 0;
-            transform: scale(0.8);
             filter: blur(2px);
         }
 

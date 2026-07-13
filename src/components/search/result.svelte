@@ -47,7 +47,7 @@
         margin-left: 0;
         color: inherit;
         text-decoration: none;
-        border-radius: 10px;
+        border-radius: 7px;
     }
 
     .res:hover,

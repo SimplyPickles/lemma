@@ -105,7 +105,6 @@ h6 {
 
 a {
     transition: 0.05s;
-    font-family: gambetta;
     color: oklch(0.5 0.175 var(--hue));
     text-decoration-color: oklch(0.5 0.175 var(--hue) / 0%);
 }

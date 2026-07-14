@@ -1,4 +1,4 @@
-import { encodeSchemaURL, SCHEMA } from "./schemas";
+import { encodeSchemaURL } from "./schemas";
 
 export type WikipediaSearchResult = {
   title: string;
@@ -16,7 +16,7 @@ type WikipediaQuickSearchPage = {
 
 export class WikipediaAPI {
   async getSearchTitles(query: string) {
-    const url = encodeSchemaURL(SCHEMA.Search, query);
+    const url = encodeSchemaURL("search", query);
     const res = await fetch(url);
     const json = JSON.parse(await res.text());
 
@@ -28,7 +28,7 @@ export class WikipediaAPI {
   }
 
   async getSearchResults(query: string): Promise<WikipediaSearchResult[]> {
-    const url = encodeSchemaURL(SCHEMA.QuickSearch, query);
+    const url = encodeSchemaURL("quickSearch", query);
     const res = await fetch(url);
     const json = JSON.parse(await res.text());
 
@@ -40,7 +40,7 @@ export class WikipediaAPI {
   }
 
   async getPageContent(query: string) {
-    const url = encodeSchemaURL(SCHEMA.Page, query);
+    const url = encodeSchemaURL("page", query);
     const res = await fetch(url);
     const json = JSON.parse(await res.text());
 

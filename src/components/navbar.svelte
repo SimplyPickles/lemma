@@ -49,6 +49,7 @@
                 font-size: 0.85rem;
                 cursor: default;
 
+                opacity: 0.5;
                 background: none;
                 border: none;
 

@@ -140,6 +140,10 @@ blockquote {
         font-weight: 250;
     }
 
+    15% {
+        filter: blur(2px);
+    }
+
     50% {
         font-weight: 700;
     }

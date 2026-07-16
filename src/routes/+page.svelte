@@ -64,7 +64,7 @@
 
             .char {
                 animation: font-weight-wave 0.8s ease-in-out;
-                animation-delay: calc(-0.1s + var(--i) * 0.04s);
+                animation-delay: calc(var(--i) * 0.075s + 2s);
 
                 display: inline-block;
                 margin-left: -0.3rem;

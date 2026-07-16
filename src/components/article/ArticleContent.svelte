@@ -131,11 +131,6 @@
         }
     }
 
-    .chev:active {
-        filter: blur(2px);
-        opacity: 0.5;
-    }
-
     .chev img {
         position: absolute;
 

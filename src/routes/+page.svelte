@@ -25,7 +25,7 @@
 
     <p aria-label={description.join(" ")}>
         {#each description as w, i}
-            <span style="animation-delay: {i * 0.005}s">{w}{i < description.length - 1 ? " " : ""}</span>
+            <span style="animation-delay: {i * 0.015}s">{w}</span>{i < description.length - 1 ? " " : ""}
         {/each}
     </p>
 
@@ -51,7 +51,7 @@
 
         #header {
             font-size: 3rem;
-            font-family: gambetta;
+            font-family: default-serif;
             text-align: center;
             margin-bottom: 0.35rem;
             user-select: none;
@@ -75,6 +75,7 @@
 
         p {
             text-align: justify;
+            text-wrap: pretty;
             max-width: 50ch;
             margin: 0 auto;
             font-size: 16px;
@@ -85,8 +86,9 @@
             }
 
             span {
+                display: inline-block;
                 opacity: 0;
-                animation: appear 1.5s forwards;
+                animation: appear 0.2s ease-out forwards;
             }
         }
     }
@@ -94,11 +96,14 @@
     @keyframes appear {
         0% {
             opacity: 0;
-            filter: blur(1px);
+            filter: blur(4px);
+            transform: translateY(12px);
         }
 
         100% {
             opacity: 1;
+            filter: blur(0);
+            transform: translateY(0);
         }
     }
 </style>

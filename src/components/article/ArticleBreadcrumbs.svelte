@@ -285,7 +285,7 @@
             display: grid;
             place-items: center;
             color: var(--color);
-            font-family: satoshi;
+            font-family: default-sans;
             font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 0.08em;

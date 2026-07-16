@@ -151,7 +151,7 @@
         border: none;
         background: none;
         color: inherit;
-        font-family: gambetta;
+        font-family: default-serif;
         font-size: 1rem;
         font-weight: 500;
         line-height: 1;

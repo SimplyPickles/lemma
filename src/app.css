@@ -1,11 +1,11 @@
 @font-face {
-    font-family: gambetta;
-    src: url("/font/gambetta.ttf") format("truetype");
+    font-family: default-serif;
+    src: url("/font/rowan.ttf") format("truetype");
 }
 
 @font-face {
-    font-family: satoshi;
-    src: url("/font/satoshi.ttf") format("truetype");
+    font-family: default-sans;
+    src: url("/font/switzer.ttf") format("truetype");
 }
 
 ::-webkit-scrollbar {
@@ -23,7 +23,7 @@
     --page-bg: oklch(0.975 0.0075 var(--hue));
     background: var(--page-bg);
     color: oklch(0.3 0.064 var(--hue));
-    font-family: satoshi;
+    font-family: default-sans;
     --secondary: oklch(0.85 0.02 var(--hue));
     --bg-color: white;
     --shadow-color: oklch(0.65 0.05 var(--hue) / 25%);
@@ -60,45 +60,45 @@ hr {
 }
 
 p {
-    font-family: satoshi;
+    font-family: default-sans;
     font-size: 1rem;
 }
 
 h1 {
-    font-family: gambetta;
+    font-family: default-serif;
     font-size: 2rem;
     font-weight: 600;
     margin-bottom: -0.5rem;
 }
 
 h2 {
-    font-family: gambetta;
+    font-family: default-serif;
     font-size: 1.75rem;
     margin-bottom: -0.25rem;
     margin-top: 2.5rem;
 }
 
 h3 {
-    font-family: gambetta;
+    font-family: default-serif;
     font-size: 1.5rem;
     margin-bottom: -0.25rem;
     margin-top: 2.5rem;
 }
 
 h4 {
-    font-family: gambetta;
+    font-family: default-serif;
     font-size: 1.25rem;
     margin-bottom: -0.75rem;
 }
 
 h5 {
-    font-family: gambetta;
+    font-family: default-serif;
     font-size: 1rem;
     margin-bottom: -0.75rem;
 }
 
 h6 {
-    font-family: gambetta;
+    font-family: default-serif;
     font-size: 0.75rem;
     margin-bottom: -0.5rem;
 }

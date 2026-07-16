@@ -63,7 +63,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-family: gambetta;
+        font-family: default-serif;
         font-size: 0.9rem;
         text-overflow: ellipsis;
         max-width: 60%;
@@ -104,7 +104,7 @@
     .placeholder {
         display: grid;
         place-items: center;
-        font-family: gambetta;
+        font-family: default-serif;
         font-size: 0.9rem;
         font-weight: 600;
         opacity: 0.8;

@@ -62,7 +62,7 @@
 <style>
     #pageContainer {
         position: fixed;
-        font-family: satoshi;
+        font-family: default-sans;
         width: 100%;
         height: 100%;
 
@@ -98,7 +98,7 @@
     .source-link {
         flex: 0 0 auto;
         min-width: 8rem;
-        font-family: gambetta;
+        font-family: default-serif;
         font-size: 0.78rem;
         text-align: center;
         opacity: 0.7;

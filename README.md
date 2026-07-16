@@ -30,7 +30,7 @@ src/
     search/+page.svelte       # Search page layout
     wiki/[title]/+page.svelte # Article reader route
 static/
-  font/                       # Local Gambetta and Satoshi fonts
+  font/                       # Locally stored fonts
   icon/                       # Search and chevron SVG icons
 ```
 

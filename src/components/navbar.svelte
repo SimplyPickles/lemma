@@ -32,7 +32,6 @@
 
         #buttons {
             position: absolute;
-            cursor: pointer;
             right: 20px;
 
             height: 100%;
@@ -42,14 +41,22 @@
             display: flex;
             gap: 24px;
             align-items: center;
+            cursor: default;
+            pointer-events: none;
 
             a {
+                pointer-events: auto;
                 font-size: 0.85rem;
+                cursor: default;
 
                 background: none;
                 border: none;
 
                 color: var(--text-color);
+
+                &:hover {
+                    cursor: pointer;
+                }
             }
         }
 
@@ -60,7 +67,6 @@
         #header {
             position: absolute;
             user-select: none;
-            cursor: pointer;
             left: 0;
             top: 0;
             height: 52px;

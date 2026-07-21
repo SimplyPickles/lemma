@@ -88,12 +88,12 @@
             span {
                 display: inline-block;
                 opacity: 0;
-                animation: appear 0.2s ease-out forwards;
+                animation: text-appear 0.2s ease-out forwards;
             }
         }
     }
 
-    @keyframes appear {
+    @keyframes text-appear {
         0% {
             opacity: 0;
             filter: blur(4px);

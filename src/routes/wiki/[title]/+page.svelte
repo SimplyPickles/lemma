@@ -242,8 +242,12 @@
         {:else}
             <h1 id="title">{title}</h1>
             <div class="article-meta">
-                <mini>{words} words · {references} links · {readingTime} min read</mini>
-                <a class="source-link" href={getWikipediaSourceUrl(title)} target="_blank" rel="noreferrer">Source</a>
+                <mini
+                    >{words} words · {references} links ·
+                    <a class="source-link" href={getWikipediaSourceUrl(title)} target="_blank" rel="noreferrer"
+                        >Source</a
+                    ></mini
+                >
             </div>
             <hr />
 
@@ -304,11 +308,6 @@
     }
 
     .source-link {
-        position: static;
-        right: 0;
-        font-family: default-serif;
-        font-size: 0.78rem;
-        text-align: center;
         opacity: 0.7;
     }
 
@@ -390,6 +389,9 @@
             font-size: 0.85rem;
             font-style: italic;
             font-weight: 450;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum" 1;
+            font-variant-numeric: tabular-nums lining-nums;
         }
     }
 

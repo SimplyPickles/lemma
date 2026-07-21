@@ -140,19 +140,29 @@
         width: 125%;
     }
 
+    :global(h1),
+    :global(h2),
+    :global(h3),
+    :global(h4),
+    :global(h5),
+    :global(h6) {
+        position: relative;
+    }
+
     .copy-section {
         margin-left: 0.5rem;
         padding: 0.1rem 0.3rem;
         border: none;
         background: none;
         color: inherit;
-        font-family: default-serif;
-        font-size: 1rem;
+        font-size: 0.8rem;
         font-weight: 500;
         line-height: 1;
         cursor: pointer;
+        position: absolute;
+        right: 0;
+        bottom: 0.5rem;
         opacity: 0;
-        vertical-align: middle;
         transition: opacity 0.15s ease;
 
         @media (max-width: 600px) {
@@ -197,14 +207,15 @@
     }
 
     .wiki-images img {
-        border-radius: 9px;
+        border-radius: 7px;
         display: block;
         transition: 0.2s ease;
         transform-origin: center;
         border: solid rgba(0, 0, 0, 0.1) 0.5px;
         outline: solid var(--secondary) 0.5px;
         box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 12px 1px;
-        max-width: 100%;
+        max-width: 90%;
+        margin-right: 10%;
         max-height: 70dvh;
         height: auto;
         object-fit: contain;
@@ -263,8 +274,12 @@
     :global(li:has(img) .gallerytext),
     :global(li:has(img) .thumbcaption) {
         padding: 0 !important;
-        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        min-height: 2rem;
+        text-align: center;
+        font-size: 0.75rem;
         line-height: 1.4;
+        text-wrap-style: pretty;
     }
 
     :global(li:has(img) p) {

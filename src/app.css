@@ -73,6 +73,7 @@ h1 {
 
 h2 {
     font-family: default-serif;
+    font-weight: 550;
     font-size: 1.75rem;
     margin-bottom: -0.25rem;
     margin-top: 2.5rem;
@@ -80,6 +81,7 @@ h2 {
 
 h3 {
     font-family: default-serif;
+    font-weight: 500;
     font-size: 1.5rem;
     margin-bottom: -0.25rem;
     margin-top: 2.5rem;
@@ -87,18 +89,21 @@ h3 {
 
 h4 {
     font-family: default-serif;
+    font-weight: 500;
     font-size: 1.25rem;
     margin-bottom: -0.75rem;
 }
 
 h5 {
     font-family: default-serif;
+    font-weight: 600;
     font-size: 1rem;
     margin-bottom: -0.75rem;
 }
 
 h6 {
     font-family: default-serif;
+    font-weight: 300;
     font-size: 0.75rem;
     margin-bottom: -0.5rem;
 }

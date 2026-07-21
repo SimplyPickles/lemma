@@ -195,6 +195,7 @@
     }
 
     #results {
+        animation: appear 0.1s ease-in forwards;
         position: absolute;
         top: calc(48px + 12px);
         left: 0;
@@ -211,7 +212,7 @@
 
     .status {
         margin: 0;
-        padding: 0 16px;
+        padding: 0 4px;
         font-size: 0.9rem;
         opacity: 0.7;
     }
@@ -219,5 +220,17 @@
     .error {
         color: oklch(0.5 0.18 25);
         opacity: 1;
+    }
+
+    @keyframes appear {
+        0% {
+            opacity: 0;
+            filter: blur(2px);
+        }
+
+        100% {
+            opacity: 1;
+            filter: none;
+        }
     }
 </style>

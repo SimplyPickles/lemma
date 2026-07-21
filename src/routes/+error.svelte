@@ -41,6 +41,7 @@
             font-size: 3rem;
             text-align: center;
             margin-bottom: 0.35rem;
+            font-weight: 350;
             animation: popup 0.5s forwards;
         }
 

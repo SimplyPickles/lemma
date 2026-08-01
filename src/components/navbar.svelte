@@ -122,6 +122,9 @@
             h1 .char {
                 animation: font-weight-wave 0.8s ease-in-out;
                 animation-delay: calc(0.5s + var(--i) * 0.04s);
+                @media (prefers-reduced-motion: reduce) {
+                    animation: none;
+                }
             }
         }
     }

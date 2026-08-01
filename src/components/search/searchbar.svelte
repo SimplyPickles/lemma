@@ -180,7 +180,12 @@
 <style>
     #search {
         opacity: 0;
+
         animation: quickappear 0.5s forwards;
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
+
         position: fixed;
         width: 55ch;
         left: calc(50% - 27.5ch);
@@ -234,6 +239,10 @@
 
     #results {
         animation: appear 0.1s ease-in forwards;
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
+
         position: absolute;
         top: calc(48px + 12px);
         left: 0;
@@ -242,7 +251,7 @@
         gap: 3px;
         padding: 6px;
         background: var(--bg-color);
-        border: solid 1px rgba(0, 0, 0, 0.15);
+        border: solid 1px var(--secondary);
         box-shadow: 0 12px 32px var(--shadow-color);
         border-radius: 12px;
         z-index: 1;

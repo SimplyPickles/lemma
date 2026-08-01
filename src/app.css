@@ -118,16 +118,17 @@ h6 {
 }
 
 a {
-    transition: 0.05s;
-    color: oklch(0.55 0.175 var(--hue));
-    text-decoration-color: oklch(0.55 0.175 var(--hue) / 0%);
+    transition: 0.2s;
+    color: var(--text-color);
+    text-decoration-color: var(--text-color);
 }
 
 a:hover {
+    color: oklch(0.55 0.175 var(--hue));
     text-decoration-color: oklch(0.5 0.175 var(--hue) / 50%);
 }
 
-a:visited {
+a:active {
     color: oklch(0.5 0.25 var(--hue));
 }
 

@@ -26,7 +26,7 @@
 
     <p aria-label={description.join(" ")}>
         {#each description as w, i}
-            <span style="animation-delay: {i * 0.015}s">{w}</span>{i < description.length - 1 ? " " : ""}
+            <span style="animation-delay: {i * 0.0075}s">{w}</span>{i < description.length - 1 ? " " : ""}
         {/each}
     </p>
 

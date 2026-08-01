@@ -2,6 +2,7 @@
     import "../app.css";
     import Searchbar from "../components/search/Searchbar.svelte";
     import Navbar from "../components/Navbar.svelte";
+    import GlobalSearch from "../components/search/GlobalSearch.svelte";
 
     let description =
         `Lemma is a private, fast, and beautifully designed Wikipedia wrapper that makes exploring knowledge feel effortless. Lemma provides a clean, focused reading experience with instant access to the information you want, without noise or distractions.`.split(
@@ -12,7 +13,7 @@
 <div id="hero">
     <!-- navigation -->
     <title>Lemma</title>
-    <Navbar></Navbar>
+    <Navbar />
 
     <!-- heading and information -->
     <h1 aria-label="Lemma" id="header">
@@ -32,7 +33,7 @@
     <!-- spacing and search -->
     <br />
     <br />
-    <Searchbar></Searchbar>
+    <Searchbar />
 </div>
 
 <style>

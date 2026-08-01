@@ -13,6 +13,7 @@
     import ArticleBreadcrumbs from "../../../components/article/ArticleBreadcrumbs.svelte";
     import ArticleContent from "../../../components/article/ArticleContent.svelte";
     import Navbar from "../../../components/Navbar.svelte";
+    import GlobalSearch from "../../../components/search/GlobalSearch.svelte";
 
     let title = $state("");
     let content = $state<ArticleBlock[]>([]);
@@ -223,7 +224,9 @@
 <svelte:window onscroll={updateActiveBreadcrumb} />
 
 <div id="pageContainer" bind:this={pageContainer} onscroll={updateActiveBreadcrumb}>
-    <Navbar></Navbar>
+    <Navbar />
+    <GlobalSearch />
+
     <title>{page.params.title} • Lemma</title>
     <div id="contentContainer">
         {#if isLoading}

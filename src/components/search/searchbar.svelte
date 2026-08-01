@@ -1,9 +1,29 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
+    import { onMount } from "svelte";
     import { WikipediaAPI, type WikipediaSearchResult } from "$lib/api/wikipedia";
     import Result from "./Result.svelte";
 
+    let { autofocus = false, onDismiss } = $props<{
+        autofocus?: boolean;
+        onDismiss?: () => void;
+    }>();
+
     const api = new WikipediaAPI();
+
+    function handleKeyDown(event: KeyboardEvent) {
+        if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+            event.preventDefault();
+            inputBox.focus();
+        }
+    }
+
+    onMount(() => {
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    });
     const debounceMs = 200;
     const maxResults = 5;
 
@@ -24,6 +44,11 @@
         results = [];
         activeIndex = -1;
         errorMessage = "";
+    }
+
+    function focusInput() {
+        inputBox?.focus();
+        inputBox?.select();
     }
 
     function scheduleSearch() {
@@ -63,11 +88,12 @@
         }
     }
 
-    function openArticle(title = query) {
+    async function openArticle(title = query) {
         const trimmedTitle = title.trim();
         if (!trimmedTitle) return;
 
-        goto(getArticlePath(trimmedTitle));
+        await goto(getArticlePath(trimmedTitle));
+        onDismiss?.();
     }
 
     function handleWindowKeydown(event: KeyboardEvent) {
@@ -77,8 +103,7 @@
         if (["INPUT", "TEXTAREA"].includes(target.tagName) || target.isContentEditable) return;
 
         event.preventDefault();
-        inputBox?.focus();
-        inputBox?.select();
+        focusInput();
     }
 
     function handleKeydown(event: KeyboardEvent) {
@@ -96,19 +121,30 @@
                 activeIndex = Math.max(activeIndex - 1, 0);
             }
         } else if (event.key === "Escape") {
-            query = "";
-            clearResults();
+            if (onDismiss) {
+                onDismiss();
+            } else {
+                query = "";
+                clearResults();
+            }
         }
     }
+
+    onMount(() => {
+        if (autofocus) focusInput();
+
+        return () => clearTimeout(debounceTimer);
+    });
 </script>
 
 <svelte:window onkeydown={handleWindowKeydown} />
 
 <div id="search">
     <div id="searchbar">
-        <img src="/icon/search.svg" class="icon" alt="" aria-hidden="true" />
+        <img src="/icon/search.svg" class="icon" alt="" aria-hidden="true" id="searchbaritem" />
         <input
             placeholder="Search articles, people, places..."
+            id="searchbar-item"
             bind:this={inputBox}
             bind:value={query}
             oninput={scheduleSearch}
@@ -148,6 +184,8 @@
         position: fixed;
         width: 55ch;
         left: calc(50% - 27.5ch);
+        top: var(--search-top, auto);
+        z-index: var(--search-z-index, auto);
 
         @media (max-width: 600px) {
             width: calc(80dvw);

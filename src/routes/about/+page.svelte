@@ -1,9 +1,12 @@
 <script lang="ts">
     import "../../app.css";
     import Navbar from "../../components/Navbar.svelte";
+    import GlobalSearch from "../../components/search/GlobalSearch.svelte";
 </script>
 
-<Navbar></Navbar>
+<Navbar />
+<GlobalSearch />
+
 <div id="pageContainer">
     <title>About • Lemma</title>
     <div id="contentContainer">
@@ -127,10 +130,6 @@
             filter: blur(0);
             transform: translateY(0);
         }
-    }
-
-    hr {
-        width: 100%;
     }
 
     #contentContainer {

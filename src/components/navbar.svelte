@@ -1,3 +1,17 @@
+<script lang="ts">
+    import { onMount } from "svelte";
+
+    let isScrolled = $state(false);
+
+    onMount(() => {
+        function handleScroll() {
+            isScrolled = window.scrollY > 20;
+        }
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
+    });
+</script>
+
 <div id="navbar">
     <a id="header" href="/" aria-label="Go to home page">
         <img src="../logo.svg" alt="" />
@@ -49,7 +63,6 @@
                 font-size: 0.85rem;
                 cursor: default;
 
-                opacity: 0.5;
                 background: none;
                 border: none;
 
@@ -87,7 +100,6 @@
             }
 
             h1 {
-                opacity: 0.5;
                 position: absolute;
                 left: 52px;
                 top: 50%;

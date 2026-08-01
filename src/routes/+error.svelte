@@ -44,7 +44,11 @@
             text-align: center;
             margin-bottom: 0.35rem;
             font-weight: 350;
+
             animation: popup 0.5s forwards;
+            @media (prefers-reduced-motion: reduce) {
+                animation: none;
+            }
         }
 
         p {
@@ -54,14 +58,22 @@
 
             span {
                 opacity: 0;
+
                 animation: appear 1.5s forwards;
+                @media (prefers-reduced-motion: reduce) {
+                    animation: none;
+                }
             }
         }
 
         a {
             opacity: 0;
+
             animation: popup 0.5s forwards;
             animation-delay: 0.75s;
+            @media (prefers-reduced-motion: reduce) {
+                animation: none;
+            }
         }
 
         text-align: center;

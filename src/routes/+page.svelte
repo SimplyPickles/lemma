@@ -66,6 +66,9 @@
             .char {
                 animation: font-weight-wave 0.8s ease-in-out;
                 animation-delay: calc(var(--i) * 0.075s + 2s);
+                @media (prefers-reduced-motion: reduce) {
+                    animation: none;
+                }
 
                 display: inline-block;
                 margin-left: -0.3rem;
@@ -89,7 +92,11 @@
             span {
                 display: inline-block;
                 opacity: 0;
+
                 animation: text-appear 0.2s ease-out forwards;
+                @media (prefers-reduced-motion: reduce) {
+                    animation: none;
+                }
             }
         }
     }

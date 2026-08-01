@@ -87,14 +87,22 @@
     h3,
     h5 {
         opacity: 0;
+
         animation: text-appear 0.4s ease-out forwards;
         animation-delay: calc(var(--i) * 0.1s);
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
     }
 
     p {
         opacity: 0;
+
         animation: text-appear 0.4s ease-out forwards;
         animation-delay: calc(var(--i) * 0.1s);
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
     }
 
     #title {

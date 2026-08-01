@@ -317,7 +317,11 @@
     .article-skeleton {
         padding-top: 1.25rem;
         opacity: 0;
+
         animation: appear 0.25s ease-out forwards;
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
     }
 
     @keyframes appear {
@@ -339,7 +343,11 @@
         );
         background-size: 200% 100%;
         border-radius: 6px;
+
         animation: skeleton-shimmer 1.4s ease-in-out infinite;
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
     }
 
     .skeleton-title {

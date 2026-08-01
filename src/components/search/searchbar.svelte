@@ -196,7 +196,7 @@
     #searchbar {
         position: relative;
         background: var(--bg-color);
-        border: solid 1px rgba(0, 0, 0, 0.15);
+        border: solid 1px var(--secondary);
         border-radius: 12px;
         box-shadow: 0 12px 32px var(--shadow-color);
         width: 100%;

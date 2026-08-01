@@ -76,6 +76,9 @@
         min-width: calc(30% - 5ch - 10%);
         overflow: visible;
         animation: breadcrumbs-fade-in 0.45s ease both;
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
 
         b {
             display: block;
@@ -260,6 +263,10 @@
             #breadcrumbs:hover,
             #breadcrumbs:focus-within {
                 animation: openblur 0.3s ease;
+                @media (prefers-reduced-motion: reduce) {
+                    animation: none;
+                }
+
                 max-height: min(72%, 620px);
                 margin-top: calc(80dvh - min(72%, 620px) * 1.5);
             }

@@ -183,7 +183,11 @@
 
     .copy-section.copied {
         color: oklch(0.45 0.18 var(--hue));
+
         animation: copy-confirm 0.2s ease-in;
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
     }
 
     @keyframes copy-confirm {

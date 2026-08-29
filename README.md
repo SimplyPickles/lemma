@@ -1,127 +1,68 @@
-# Lemma
+# Disdrometer
 
-Lemma is a private, fast, and beautifully designed Wikipedia reader that makes exploring knowledge feel effortless. It provides a clean reading experience with focused typography, lightweight navigation, and direct access to Wikipedia article content without the usual visual clutter.
+A lightweight macOS menu-bar app that adds a customizable rain overlay to your desktop. It’s built to be entirely non-intrusive—perfect for ambient background visuals while you work.
 
-The app fetches Wikipedia articles, extracts the readable content, and presents it in a calm custom layout with local fonts, article stats, images, headings, links, and section navigation.
+## Features
 
-## Stack
+* **Lives in the menu bar:** No Dock icon clutter. All controls are tucked away in the menu bar dropdown.
+* **Multi-display support:** Automatically detects connected monitors and spans the rain effect across all of them.
+* **Click-through overlays:** The rain windows ignore mouse events, so they never interfere with your actual work.
+* **Hardware-accelerated:** Uses `CAEmitterLayer` to keep CPU and GPU usage close to zero.
+* **Tweakable physics:** Adjust drop intensity, fall speed, wind angle, opacity, and lifetime on the fly. Settings save automatically via `UserDefaults`.
 
-- [SvelteKit](https://svelte.dev/docs/kit)
-- [Svelte 5](https://svelte.dev/)
-- [Vite](https://vite.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Bun](https://bun.sh/) for dependency install and scripts
+## Requirements
 
-## Structure
+* macOS 13.0+ (relies on SwiftUI's `MenuBarExtra`)
+* Xcode 14+ / Swift 5.9
+* Zero external dependencies.
+
+## Installation
+
+**Download the app:**
+Grab the latest pre-built binary from the **Releases** page, unzip it, and drag `Disdrometer.app` to your `/Applications` folder.
+
+**Build from source:**
+
+```sh
+git clone https://github.com/yourusername/disdrometer.git
+cd disdrometer
+open Disdrometer/Disdrometer.xcodeproj
+
+```
+
+Once open in Xcode, select the **Disdrometer** scheme and hit `⌘R` to build and run.
+
+To build via the command line:
+
+```sh
+xcodebuild -scheme Disdrometer -configuration Release
+# The binary will output to ./build/Release/Disdrometer.app
+
+```
+
+## Architecture
+
+The project uses a lightweight MVVM approach, mixing SwiftUI for the menu-bar interface with Core Animation for the actual rain rendering.
 
 ```text
-src/
-  components/
-    navbar.svelte             # Fixed navigation/header UI
-    searchbar.svelte          # Search input UI
-  lib/
-    api/
-      schemas.ts              # Wikipedia endpoint URL templates
-      wikipedia.ts            # Wikipedia API wrapper
-  routes/
-    +layout.svelte            # Global app shell, favicon, and CSS import
-    +page.svelte              # Landing page
-    +error.svelte             # Error/404 page
-    search/+page.svelte       # Search page layout
-    wiki/[title]/+page.svelte # Article reader route
-static/
-  font/                       # Locally stored fonts
-  icon/                       # Search and chevron SVG icons
+DisdrometerApp.swift  → Entry point, handles app lifecycle and screen change observation
+MenuBarView.swift     → The SwiftUI dropdown menu (sliders, toggles, reset button)
+RainController.swift  → Manages user settings and the lifecycle of the rain windows
+RainWindow.swift      → The borderless, click-through NSWindow (one per display)
+RainView.swift        → The NSView rendering the CAEmitterLayer rain effect
+
 ```
 
-## Getting started
+## Settings
 
-Install dependencies:
+You can tweak the environment in real-time from the menu bar. Hit the **Reset** button at any time to revert to the default drizzle.
 
-```sh
-bun install
-```
+| Parameter | Range | What it does |
+| --- | --- | --- |
+| **Intensity** | 20–400 drops/s | How heavily it's raining |
+| **Fall Speed** | 200–1600 pt/s | The vertical velocity of the raindrops |
+| **Wind Angle** | -30° to 30° | Horizontal drift (left to right) |
+| **Opacity** | 0.1–1.0 | Visual transparency of the drops |
+| **Lifetime** | 1–15 s | How long a drop exists before disappearing |
 
-Start the development server:
-
-```sh
-bun run dev
-```
-
-Open the app in your browser at the local URL printed by Vite, usually `http://localhost:5173`.
-
-To start the dev server and open the browser automatically:
-
-```sh
-bun run dev --open
-```
-
-## Available scripts
-
-```sh
-bun run dev          # Start the Vite/SvelteKit dev server
-bun run build        # Build a production version
-bun run preview      # Preview the production build locally
-bun run check        # Run SvelteKit sync and svelte-check
-bun run check:watch  # Run svelte-check in watch mode
-```
-
-## Reading articles
-
-Articles are served through the dynamic route:
-
-```text
-/wiki/[title]
-```
-
-For example:
-
-```text
-/wiki/MacOS
-/wiki/Alan_Turing
-/wiki/Svelte
-```
-
-When an article loads, Lemma requests the parsed Wikipedia page, filters out non-reading elements, and renders the main content in its own layout.
-
-## Wikipedia API integration
-
-Lemma talks directly to public Wikipedia endpoints from the browser:
-
-- Search titles: `action=query&list=search`
-- Page content: `action=parse&prop=text`
-- Media list endpoint available in the schema definitions
-
-The API wrapper lives in `src/lib/api/wikipedia.ts`, with endpoint templates in `src/lib/api/schemas.ts`. The wrapper includes lightweight TypeScript response shapes for the Wikipedia search and parsed-page responses, and `encodeSchemaURL` handles URL-safe query interpolation.
-
-Because requests are client-side, users connect directly to Wikipedia. Lemma does not require an API key, backend proxy, or server-side cache.
-
-## Design notes
-
-Lemma’s interface is intentionally quiet:
-
-- soft neutral page background,
-- custom serif headings,
-- clean sans-serif body text,
-- subtle shadows and borders,
-- animated copy on landing and error pages,
-- focused article width for readability,
-- persistent section navigation for longer articles.
-
-Global visual styles live in `src/app.css` and are imported once from `src/routes/+layout.svelte`; route-specific layout and animation styles live alongside each Svelte route.
-
-## Deployment
-
-The project uses `@sveltejs/adapter-auto`, which supports several common deployment platforms automatically. If deploying to a platform that needs a specific adapter, install and configure the matching SvelteKit adapter.
-
-Build for production with:
-
-```sh
-bun run build
-```
-
-Preview the production build with:
-
-```sh
-bun run preview
-```
+---
